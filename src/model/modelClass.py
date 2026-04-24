@@ -12,8 +12,8 @@ class Model():
         self.model.to(config.device)
         
     def getLoader(self, train, test, batch_size):
-        self.train_loader = DataLoader(self.tokenizer(train), batch_size=batch_size, shuffle=False, num_workers=4)
-        self.test_loader = DataLoader(self.tokenizer(test), batch_size=batch_size, shuffle=False, num_workers=4)
+        self.train_loader = DataLoader(self.tokenize(train), batch_size=batch_size, shuffle=False, num_workers=4)
+        self.test_loader = DataLoader(self.tokenize(test), batch_size=batch_size, shuffle=False, num_workers=4)
         
     def getModel(self):
         if 'gemma' in self.name:
@@ -22,3 +22,14 @@ class Model():
             self.model, self.tokenizer = getBERTimbau(self)
         else:
             raise ValueError("Unsupported model")
+        
+    def tokenizeInstance(self, instances):
+        return self.tokenizer(instances["text"], padding="max_length", truncation=True, max_length=512) #talvez tenha que alterar isso no futuro
+        
+    def tokenize(self, dataset):
+        
+        tokenized_dataset = dataset.map(self.tokenizeInstance, batched=True, remove_columns=dataset.column_names)
+        
+        tokenized_dataset.set_format(type="torch", columns=["input_ids", "attention_mask"] + self.config.class_cols) #coloca no formato do PyTorch
+        
+        return tokenized_dataset

@@ -37,7 +37,7 @@ def stratifiedIndices(dataset, subset_size):
     
     return idx_subset.flatten().tolist()
 
-def loadTuPyE(train_size, test_size):
+def loadTuPyE(train_size=-1, test_size=-1): #-1 quer dizer carregar inteiro
     
     dataset_link = "Silly-Machine/TuPyE-Dataset"
     
@@ -66,12 +66,12 @@ def loadTuPyE(train_size, test_size):
             test = load_dataset(dataset_link, "multilabel", split="test")
             
             console.print("Selecionando índices para os subsets")
-            train = train.select(stratifiedIndices(train, train_size))
-            test = test.select(stratifiedIndices(test, test_size))
+            if train_size != -1: train = train.select(stratifiedIndices(train, train_size))
+            if test_size != -1: test = test.select(stratifiedIndices(test, test_size))
             
             console.print("Salvando subsets em disco")
             train.save_to_disk(f'./data/{dir_name}/train')
-            test.save_to_disk(f'./data/{dir_name}/validation')
+            test.save_to_disk(f'./data/{dir_name}/test')
             
         
         #depois de carregados, coloca em formato do pytorch

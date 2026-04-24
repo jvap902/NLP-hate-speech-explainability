@@ -1,10 +1,18 @@
-import torch
 from src import *
 
 if __name__ == "__main__":
     
-    #train, test = loadDataset.loadTuPyE(2000, 2000) #definir tamanhos dos splits
+    train, test = loadDataset.loadTuPyE(-1, -1) #definir tamanhos dos splits
     
-    #m1 = Model("google/gemma-4-E4B-it", "gemma-E4B")
-    m2 = Model("neuralmind/bert-base-portuguese-cased", "BERTimbau-base")
-    m3 = Model("neuralmind/bert-large-portuguese-cased", "BERTimbau-large")
+    models = config.models
+    
+    for key, value in models.items(): #apenas testando se é possível carregar
+        modelc = Model(value, key)
+        
+        modelc.getLoader(train, test, batch_size=32)
+        
+        classify.fineTuneModel(modelc, 1)
+        
+        classify.evaluateModel(modelc, modelc.test_loader)
+        
+        del modelc
