@@ -1,6 +1,7 @@
 from torch.utils.data import DataLoader
 from .modelUtils import *
 from .. import config
+from datasets import Dataset
 
 class Model():
     def __init__(self, model_link, model_name):
@@ -28,8 +29,8 @@ class Model():
         
     def tokenize(self, dataset):
         
-        tokenized_dataset = dataset.map(self.tokenizeInstance, batched=True, remove_columns=dataset.column_names)
-        
-        tokenized_dataset.set_format(type="torch", columns=["input_ids", "attention_mask"] + self.config.class_cols) #coloca no formato do PyTorch
+        tokenized_dataset = dataset.map(self.tokenizeInstance, batched=True)
+                
+        tokenized_dataset.with_format(type="torch", columns=["input_ids", "attention_mask"] + config.class_cols, device=config.device) #coloca no formato do PyTorch
         
         return tokenized_dataset
