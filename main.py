@@ -1,4 +1,5 @@
 from src import *
+import torch
 
 if __name__ == "__main__":
     
@@ -18,5 +19,7 @@ if __name__ == "__main__":
         classify.fineTuneModel(modelc, 1)
         
         classify.evaluateModel(modelc, modelc.test_loader)
+        
+        modelc.saveModel()
         
         del modelc

@@ -14,3 +14,5 @@ models = {
     "Gemma": "google/gemma-4-E4B-it",
     "Llama": "meta-llama/Llama-3.2-1B"
 }
+
+model_save_dir = "fine-tuned-models"
