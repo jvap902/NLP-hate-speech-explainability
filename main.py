@@ -1,5 +1,4 @@
 from src import *
-import torch
 
 if __name__ == "__main__":
     
@@ -20,6 +19,9 @@ if __name__ == "__main__":
         
         classify.evaluateModel(modelc, modelc.test_loader)
         
-        modelc.saveModel()
+        modelc.saveModel()        
+        
+        attr, tokens = interpret.explainPrediction(modelc, [("eu queria dar um soco nele", 0)])
+        interpret.plotAttributions(attr, tokens, "aggressive")
         
         del modelc

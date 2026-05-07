@@ -1,0 +1,3 @@
+Provavelmente teremos que escolher subset menor de textos para aplicar integrated gradients, é um processo demorado.
+    -> escolher frases de forma estratificada
+
