@@ -15,14 +15,14 @@ if __name__ == "__main__":
         
         modelc.getLoader(train, test, batch_size=32)
         
-        classify.evaluateModel(modelc, modelc.test_loader)
-        
+        #classify.evaluateModel(modelc, modelc.test_loader)
+    
         modelc, losses = classify.fineTuneModel(modelc, 15, epoch_save=True)
-        
+    
         dataVisualization.plotLosses(losses, save_path=f"output-images/{modelc.name}-loss.png", show=True)
-        
+    
         classify.evaluateModel(modelc, modelc.test_loader)
-        
+    
         modelc.saveModel()
         
         ig_dataset = loadDataset.igDataset()

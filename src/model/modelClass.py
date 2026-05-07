@@ -61,4 +61,4 @@ class Model():
         
         tokenized_dataset = dataset.map(self.tokenizeInstance, batched=True)
         
-        return tokenized_dataset.with_format(type="torch", columns=["input_ids", "attention_mask"] + config.classes, device=config.device) #coloca no formato do PyTorch
+        return tokenized_dataset.with_format(type="torch", columns=["input_ids", "attention_mask"] + config.classes) #coloca no formato do PyTorch

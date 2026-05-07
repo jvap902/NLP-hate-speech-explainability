@@ -45,7 +45,7 @@ def classifyInputs(modelc, loader): #preliminar
     
     df = pd.DataFrame({
         'text': all_texts,
-        'pred': all_preds,
+        'preds': all_preds,
         'labels': all_labels
     })
     
@@ -54,7 +54,7 @@ def classifyInputs(modelc, loader): #preliminar
 def evaluateModel(modelc, loader):
     df_results = classifyInputs(modelc, loader)
 
-    preds, labels = df_results["preds"], df_results["labels"]
+    preds, labels = df_results["preds"].tolist(), df_results["labels"].tolist()
 
     stats = classification_report(
         labels, 
