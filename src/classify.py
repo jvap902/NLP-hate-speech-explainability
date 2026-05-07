@@ -2,9 +2,17 @@ import torch
 import torch.optim as optim
 from torch import nn
 from tqdm import tqdm
-from . import config
 from sklearn.metrics import classification_report, f1_score, accuracy_score
 import pandas as pd
+import shutil
+from . import config
+
+try:
+    from google.colab import files
+    IN_COLAB = True
+except (ImportError, ModuleNotFoundError):
+    IN_COLAB = False
+    files = None
 
 def classifyInputs(modelc, loader): #preliminar
     all_preds = []
@@ -43,13 +51,9 @@ def evaluateModel(modelc, loader):
         zero_division=0,
         output_dict=True
     )
-    
-    stats = pd.DataFrame(stats)
 
-    # Print a detailed report
     print(stats)
 
-    # Specifically for your article summary:
     micro_f1 = f1_score(labels, preds, average='micro')
     macro_f1 = f1_score(labels, preds, average='macro')
     acc = accuracy_score(labels, preds)
@@ -58,11 +62,14 @@ def evaluateModel(modelc, loader):
     print(f"Macro F1: {macro_f1:.4f}")
     print(f"Accuracy: {acc:.4f}")
     
+    return stats
+    
     
 def fineTuneModel(modelc, epochs, epoch_save = False):
     modelc.model.train()
     criterion = nn.CrossEntropyLoss()
     optimizer = optim.Adam(modelc.model.parameters(), lr=0.01)
+    losses = []
     
     for epoch in tqdm(range(epochs), desc=f"Fine Tuning"):
         for batch in tqdm(modelc.train_loader, desc=f"Epoch progress"):
@@ -81,8 +88,20 @@ def fineTuneModel(modelc, epochs, epoch_save = False):
             loss = criterion(logits, labels)
             loss.backward()
             optimizer.step()
+            losses.append(loss)
+        
+        
+        validate(modelc)
         
         if epoch_save: modelc.saveModel()
+        
+        if IN_COLAB: #caso esteja no colab já baixa uma cópia para não perder por limite de tempo
+            # Zips the folder then triggers download
+            shutil.make_archive(modelc.name, 'zip', {modelc.save_dir})
+            files.download(f'{modelc.name}.zip')
+            
+    return modelc, losses
 
-    # 4. Evaluation (on pre-extracted validation features)
-    #accuracy = evaluateModel(modelc.validation_loader, modelc.model)
+
+def validate(modelc):
+    raise NotImplementedError

@@ -39,7 +39,7 @@ def stratifiedIndices(dataset, subset_size):
 
 def loadTuPyE(train_size=-1, test_size=-1): #-1 quer dizer carregar inteiro
     
-    dataset_link = "Silly-Machine/TuPyE-Dataset"
+    dataset_link = "Silly-Machine/TuPyE-Dataset" #https://huggingface.co/datasets/Silly-Machine/TuPyE-Dataset
     
     console.print(Markdown("\n ## Loading dataset via Hugging Face \n"))
             

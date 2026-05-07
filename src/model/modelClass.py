@@ -1,8 +1,12 @@
 from transformers import AutoModelForSequenceClassification, AutoTokenizer
 from torch.utils.data import DataLoader
+from pathlib import Path
+from rich.console import Console
+from rich.markdown import Markdown
 from .modelUtils import *
 from .. import config
-from pathlib import Path
+
+console = Console()
 
 class Model():
     def __init__(self, model_link, model_name):
@@ -23,6 +27,9 @@ class Model():
         self.test_loader = DataLoader(self.tokenize(test), batch_size=batch_size, shuffle=False, num_workers=4)
         
     def newModel(self):
+        
+        console.print(Markdown(f"\n ## Creating new {self.name} \n"))
+        
         if 'gemma' in self.name:
             self.model, self.tokenizer = getGemma(self)
         if 'bertimbau' in self.name.lower():
@@ -31,6 +38,9 @@ class Model():
             raise ValueError("Unsupported model")
         
     def loadModel(self):
+        
+        console.print(Markdown(f"\n ## Loading saved model at {self.save_dir} \n"))
+        
         self.tokenizer = AutoTokenizer.from_pretrained(self.save_dir)
         self.model = AutoModelForSequenceClassification.from_pretrained(
             self.save_dir,

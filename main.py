@@ -15,13 +15,13 @@ if __name__ == "__main__":
         
         classify.evaluateModel(modelc, modelc.test_loader)
         
-        classify.fineTuneModel(modelc, 15, epoch_save=True)
+        modelc, losses = classify.fineTuneModel(modelc, 15, epoch_save=True, colab=False) #colab=True caso esteja rodando no colab
         
         classify.evaluateModel(modelc, modelc.test_loader)
         
-        modelc.saveModel()
+        #modelc.saveModel()
         
-        #attr, tokens = interpret.explainPrediction(modelc, [("eu queria dar um soco nele", 0)])
-        #interpret.plotAttributions(attr[0], tokens[0], "aggressive", save_path=f"{modelc.name}.png", show=False)
+        attr, tokens = interpret.explainPrediction(modelc, [("eu queria dar um soco nele", 0)])
+        dataVisualization.plotAttributions(attr[0], tokens[0], "aggressive", save_path=f"{modelc.name}.png", show=False)
         
         del modelc
