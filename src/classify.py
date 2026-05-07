@@ -101,7 +101,7 @@ def fineTuneModel(modelc, epochs, epoch_save = False):
             loss.backward()
             optimizer.step()
         
-        validate(modelc)
+        #validate(modelc)
         
         losses.loc[len(losses)] = {'Iteration': epoch, 'Loss': loss}
         
