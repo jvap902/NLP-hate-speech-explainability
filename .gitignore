@@ -2,5 +2,5 @@
 */__pycache__
 /__pycache__
 /data
-/fine-tuned-models
+/fine-tuned-models/*/
 *.pyc

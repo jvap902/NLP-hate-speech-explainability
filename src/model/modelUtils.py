@@ -8,7 +8,7 @@ def getGemma(modelc):
     
     model = GemmaForSequenceClassification.from_pretrained(
         modelc.link,
-        num_labels=len(config.class_cols),
+        num_labels=len(config.classes),
         problem_type="multi_label_classification"
     )
     
@@ -21,7 +21,7 @@ def getBERTimbau(modelc):
     
     model = BertForSequenceClassification.from_pretrained(
         modelc.link,
-        num_labels=len(config.class_cols),
+        num_labels=len(config.classes),
         problem_type="multi_label_classification"
     )
     

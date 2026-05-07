@@ -1,3 +1,4 @@
 Provavelmente teremos que escolher subset menor de textos para aplicar integrated gradients, é um processo demorado.
     -> escolher frases de forma estratificada
 
+Talvez criar dentro de /fine-tuned-models .json ou .txt que diga quantas épocas cada um tem e talvez usar para atualizar arquivo zip

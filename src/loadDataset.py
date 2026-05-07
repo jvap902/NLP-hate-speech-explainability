@@ -1,12 +1,13 @@
 from huggingface_hub import login
 from pathlib import Path
-from datasets import load_dataset, load_from_disk
+from datasets import load_dataset, load_from_disk, Dataset
 import numpy as np
-from . import config
+import pandas as pd
 from skmultilearn.model_selection import iterative_train_test_split
 from rich.console import Console
 from rich.markdown import Markdown
 from rich.panel import Panel
+from . import config
 
 console = Console()
 
@@ -23,7 +24,7 @@ def loadToken(file_path):
 def stratifiedIndices(dataset, subset_size):
     
     # 1. Extract labels
-    y = np.array([dataset[col] for col in config.class_cols]).T
+    y = np.array([dataset[col] for col in config.classes]).T
     
     # 2. Create indices
     indices = np.arange(len(y)).reshape(-1, 1)
@@ -75,8 +76,8 @@ def loadTuPyE(train_size=-1, test_size=-1): #-1 quer dizer carregar inteiro
             
         
         #depois de carregados, coloca em formato do pytorch
-        train = train.with_format("torch", columns=config.class_cols)
-        test = test.with_format("torch", columns=config.class_cols)
+        train = train.with_format("torch", columns=config.classes)
+        test = test.with_format("torch", columns=config.classes)
         
         console.print(Markdown(f"\n### Datasets loaded"))
         
@@ -84,3 +85,14 @@ def loadTuPyE(train_size=-1, test_size=-1): #-1 quer dizer carregar inteiro
          raise RuntimeError(f"Failed to load Hugging Face Dataset: {e}")
      
     return train, test
+
+
+def igDataset():    
+    dataset = [
+        ["Eu queria dar um soco nele", 1, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0],
+        ["Texto neutro de exemplo",     0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0]
+    ]
+    
+    dataset = pd.DataFrame(dataset, columns=['text'] + config.classes)
+    
+    return Dataset.from_pandas(dataset)

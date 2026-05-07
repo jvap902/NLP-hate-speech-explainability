@@ -1,3 +1,5 @@
+from torch.utils.data import DataLoader
+import pandas as pd
 from src import *
 
 if __name__ == "__main__":
@@ -15,13 +17,24 @@ if __name__ == "__main__":
         
         classify.evaluateModel(modelc, modelc.test_loader)
         
-        modelc, losses = classify.fineTuneModel(modelc, 15, epoch_save=True, colab=False) #colab=True caso esteja rodando no colab
+        modelc, losses = classify.fineTuneModel(modelc, 15, epoch_save=True)
+        
+        dataVisualization.plotLosses(losses, save_path=f"output-images/{modelc.name}-loss.png", show=True)
         
         classify.evaluateModel(modelc, modelc.test_loader)
         
-        #modelc.saveModel()
+        modelc.saveModel()
         
-        attr, tokens = interpret.explainPrediction(modelc, [("eu queria dar um soco nele", 0)])
-        dataVisualization.plotAttributions(attr[0], tokens[0], "aggressive", save_path=f"{modelc.name}.png", show=False)
+        ig_dataset = loadDataset.igDataset()
+        
+        ig_tokenized = modelc.tokenize(ig_dataset)
+        
+        ig_loader = DataLoader(ig_tokenized, batch_size=32, shuffle=False, num_workers=4)
+        
+        ig_predictions = classify.classifyInputs(modelc, ig_loader)
+
+        print(ig_predictions)
+        
+        interpret.explainPrediction(modelc, ig_tokenized)
         
         del modelc

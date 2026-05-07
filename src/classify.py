@@ -15,6 +15,7 @@ except (ImportError, ModuleNotFoundError):
     files = None
 
 def classifyInputs(modelc, loader): #preliminar
+    all_texts = []
     all_preds = []
     all_labels = []
 
@@ -22,32 +23,43 @@ def classifyInputs(modelc, loader): #preliminar
     with torch.no_grad():
         for batch in tqdm(loader, desc="classifying"): #para teste
             # Move inputs to GPU
-            input_ids = batch['input_ids'].to(modelc.model.device)
-            attention_mask = batch['attention_mask'].to(modelc.model.device)
+            input_ids = batch['input_ids'].to(config.device)
+            attention_mask = batch['attention_mask'].to(config.device)
             
             #predictions
             logits = modelc.model(input_ids, attention_mask).logits
             probs = torch.sigmoid(logits)
             binary_preds = (probs > 0.5).int()
-            all_preds.append(binary_preds.cpu())
+            all_preds.extend(binary_preds.cpu().tolist())
             
             #true labels
-            labels = torch.stack([batch[col] for col in config.class_cols], dim=1)
-            all_labels.append(labels.cpu())
-
-    # Combine all batches
-    final_predictions = torch.cat(all_preds)
-    final_labels = torch.cat(all_labels).numpy()
+            labels = torch.stack([batch[col] for col in config.classes], dim=1)
+            all_labels.extend(labels.cpu().tolist())
+            
+            # Se o loader não tiver a chave 'text', decodificamos os input_ids
+            if 'text' in batch:
+                texts = batch['text']
+            else:
+                texts = modelc.tokenizer.batch_decode(input_ids, skip_special_tokens=True)
+            all_texts.extend(texts)
     
-    return final_predictions, final_labels
+    df = pd.DataFrame({
+        'text': all_texts,
+        'pred': all_preds,
+        'labels': all_labels
+    })
+    
+    return df
 
 def evaluateModel(modelc, loader):
-    preds, labels = classifyInputs(modelc, loader)
+    df_results = classifyInputs(modelc, loader)
+
+    preds, labels = df_results["preds"], df_results["labels"]
 
     stats = classification_report(
         labels, 
         preds, 
-        target_names=config.class_cols, 
+        target_names=config.classes, 
         zero_division=0,
         output_dict=True
     )
@@ -69,7 +81,7 @@ def fineTuneModel(modelc, epochs, epoch_save = False):
     modelc.model.train()
     criterion = nn.CrossEntropyLoss()
     optimizer = optim.Adam(modelc.model.parameters(), lr=0.01)
-    losses = []
+    losses = pd.DataFrame()
     
     for epoch in tqdm(range(epochs), desc=f"Fine Tuning"):
         for batch in tqdm(modelc.train_loader, desc=f"Epoch progress"):
@@ -77,7 +89,7 @@ def fineTuneModel(modelc, epochs, epoch_save = False):
             attention_mask = batch['attention_mask'].to(config.device)
             
             # Stack your 13 labels into a single matrix
-            labels = torch.stack([batch[col] for col in config.class_cols], dim=1).float()
+            labels = torch.stack([batch[col] for col in config.classes], dim=1).float()
             labels = labels.to(config.device)
 
             optimizer.zero_grad()
@@ -88,15 +100,14 @@ def fineTuneModel(modelc, epochs, epoch_save = False):
             loss = criterion(logits, labels)
             loss.backward()
             optimizer.step()
-            losses.append(loss)
-        
         
         validate(modelc)
         
-        if epoch_save: modelc.saveModel()
+        losses.loc[len(losses)] = {'Iteration': epoch, 'Loss': loss}
+        
+        if epoch_save: modelc.saveModel(trained_epochs=1)
         
         if IN_COLAB: #caso esteja no colab já baixa uma cópia para não perder por limite de tempo
-            # Zips the folder then triggers download
             shutil.make_archive(modelc.name, 'zip', {modelc.save_dir})
             files.download(f'{modelc.name}.zip')
             

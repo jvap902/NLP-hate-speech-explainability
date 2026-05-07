@@ -1,43 +1,37 @@
 from captum.attr import LayerIntegratedGradients
-import torch
-from typing import Tuple, List
 from src import config
+from .dataVisualization import plotAttributions
 
-def explainPrediction(modelc, inputs: List[Tuple[str, int]]):
+def explainPrediction(modelc, tokenized_dataset):
     modelc.model.eval()
     
-    # 1. Define a wrapper function that Captum can use
+    # wrapper function that Captum can use
     def forward_func(input_ids):
-        # We only care about the .logits tensor
         return modelc.model(input_ids).logits
 
-    # 2. Initialize LayerIntegratedGradients using the wrapper
     # Using modelc.model.bert.embeddings for BERTimbau
     lig = LayerIntegratedGradients(forward_func, modelc.model.bert.embeddings)
     
     all_attr = []
     all_tokens = []
     
-    for text, label_idx in inputs:
-        # 1. WRAP the string in a dict so tokenizeInstance works
-        tokenized = modelc.tokenizeInstance({"text": text})
+    for i in range(len(tokenized_dataset)):
         
-        # 2. Extract and prepare input_ids as a Tensor
-        # (Assuming tokenizeInstance returns a dictionary of lists/tensors)
-        input_ids = torch.tensor(tokenized['input_ids']).unsqueeze(0).to(config.device)
+        input_ids = tokenized_dataset[i]['input_ids'].unsqueeze(0).to(config.device)
         
-        # 3. Calculate attribution on the embeddings
-        # We target the specific label_idx
-        attributions = lig.attribute(inputs=input_ids, target=label_idx, n_steps=50)
+        label_values = [tokenized_dataset[i][cls].item() for cls in config.classes]
+        active_classes = [idx for idx, val in enumerate(label_values) if val == 1]
         
-        # 4. Process for visualization
-        # Sum along the embedding dimensions to get one score per token
-        attributions = attributions.sum(dim=-1).squeeze(0)
-        
-        # Convert IDs back to words for the result
-        tokens = modelc.tokenizer.convert_ids_to_tokens(input_ids[0])
-        
-        all_attr.append(attributions.cpu().detach().numpy())
-        all_tokens.append(tokens)
-    
-    return all_attr, all_tokens
+        for target_idx in active_classes:
+            # 3. Calcular atribuição
+            attributions = lig.attribute(inputs=input_ids, target=target_idx, n_steps=50)
+            
+            # 4. Processar
+            attributions = attributions.sum(dim=-1).squeeze(0)
+            
+            tokens = modelc.tokenizer.convert_ids_to_tokens(input_ids[0])
+            
+            all_attr.append(attributions.cpu().detach().numpy())
+            all_tokens.append(tokens)
+            
+            plotAttributions(all_attr[0], all_tokens[0], "aggressive", save_path=f"output-images/{modelc.name}-aggressive-ig.png", show=True)

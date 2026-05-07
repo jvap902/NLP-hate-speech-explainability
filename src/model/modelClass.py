@@ -5,6 +5,7 @@ from rich.console import Console
 from rich.markdown import Markdown
 from .modelUtils import *
 from .. import config
+from .. import fileHandler
 
 console = Console()
 
@@ -44,21 +45,20 @@ class Model():
         self.tokenizer = AutoTokenizer.from_pretrained(self.save_dir)
         self.model = AutoModelForSequenceClassification.from_pretrained(
             self.save_dir,
-            num_labels=len(config.class_cols),
+            num_labels=len(config.classes),
             problem_type="multi_label_classification"
         )
         
-    def saveModel(self):
+    def saveModel(self, trained_epochs=0):
+        fileHandler.updateJson(json_path=config.fine_tune_info_path, fields=[self.name], values=[trained_epochs], increment=[True])
         self.model.save_pretrained(self.save_dir)
         self.tokenizer.save_pretrained(self.save_dir)
         
-    def tokenizeInstance(self, instances):
-        return self.tokenizer(instances["text"], padding="max_length", truncation=True, max_length=512) #talvez tenha que alterar isso no futuro
+    def tokenizeInstance(self, instance):
+        return self.tokenizer(instance["text"], padding="max_length", truncation=True, max_length=512) #talvez tenha que alterar isso no futuro
         
     def tokenize(self, dataset):
         
         tokenized_dataset = dataset.map(self.tokenizeInstance, batched=True)
-                
-        tokenized_dataset.with_format(type="torch", columns=["input_ids", "attention_mask"] + config.class_cols, device=config.device) #coloca no formato do PyTorch
         
-        return tokenized_dataset
+        return tokenized_dataset.with_format(type="torch", columns=["input_ids", "attention_mask"] + config.classes, device=config.device) #coloca no formato do PyTorch

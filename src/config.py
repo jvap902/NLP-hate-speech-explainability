@@ -4,7 +4,7 @@ import torch
 device = "cuda" if torch.cuda.is_available() else "cpu"
 
 #classes da classificação multilabel
-class_cols = ['aggressive', 'hate', 'ageism', 'aporophobia', 'body_shame', 'capacitism', 'lgbtphobia', 'political', 'racism', 'religious_intolerance', 'misogyny', 'xenophobia', 'other']
+classes = ['aggressive', 'hate', 'ageism', 'aporophobia', 'body_shame', 'capacitism', 'lgbtphobia', 'political', 'racism', 'religious_intolerance', 'misogyny', 'xenophobia', 'other']
 
 models = {
     "BERTimbau-base": "neuralmind/bert-base-portuguese-cased",
@@ -16,3 +16,5 @@ models = {
 }
 
 model_save_dir = "fine-tuned-models"
+
+fine_tune_info_path = f"{model_save_dir}/info.json"
