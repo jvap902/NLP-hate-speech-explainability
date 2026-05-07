@@ -59,7 +59,7 @@ def evaluateModel(modelc, loader):
     print(f"Accuracy: {acc:.4f}")
     
     
-def fineTuneModel(modelc, epochs):
+def fineTuneModel(modelc, epochs, epoch_save = False):
     modelc.model.train()
     criterion = nn.CrossEntropyLoss()
     optimizer = optim.Adam(modelc.model.parameters(), lr=0.01)
@@ -81,6 +81,8 @@ def fineTuneModel(modelc, epochs):
             loss = criterion(logits, labels)
             loss.backward()
             optimizer.step()
+        
+        if epoch_save: modelc.saveModel()
 
     # 4. Evaluation (on pre-extracted validation features)
     #accuracy = evaluateModel(modelc.validation_loader, modelc.model)
