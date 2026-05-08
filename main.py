@@ -1,5 +1,7 @@
 from torch.utils.data import DataLoader
 import pandas as pd
+from rich.console import Console
+from rich.markdown import Markdown
 from src import *
 
 if __name__ == "__main__":
@@ -17,11 +19,11 @@ if __name__ == "__main__":
         
         #classify.evaluateModel(modelc, modelc.test_loader)
     
-        modelc, losses = classify.fineTuneModel(modelc, 15, epoch_save=True)
+        #modelc, losses = classify.fineTuneModel(modelc, 15, epoch_save=True)
     
-        dataVisualization.plotLosses(losses, save_path=f"output-images/{modelc.name}-loss.png", show=False)
+        #dataVisualization.plotLosses(losses, save_path=f"output-images/{modelc.name}-loss.png", show=False)
     
-        classify.evaluateModel(modelc, modelc.test_loader)
+        #classify.evaluateModel(modelc, modelc.test_loader)
     
         modelc.saveModel()
         
@@ -31,10 +33,12 @@ if __name__ == "__main__":
         
         ig_loader = DataLoader(ig_tokenized, batch_size=32, shuffle=False, num_workers=4)
         
-        ig_predictions = classify.classifyInputs(modelc, ig_loader)
+        #ig_predictions = classify.classifyInputs(modelc, ig_loader)
 
-        print(ig_predictions)
+        #print(ig_predictions)
         
-        interpret.explainPrediction(modelc, ig_tokenized, show_graph=False)
+        interpret.explainPrediction(modelc, ig_tokenized, show_graph=True)
+        
+        raise
         
         del modelc

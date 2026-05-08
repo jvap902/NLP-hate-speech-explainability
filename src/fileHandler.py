@@ -5,7 +5,7 @@ def updateJson(json_path, fields, values, increment=None):
         json_data = json.load(f)
         
         for idx, field in enumerate(fields):
-            if increment != None:
+            if increment == None or field not in json_data:
                 val = values[idx]
                 
             else:
