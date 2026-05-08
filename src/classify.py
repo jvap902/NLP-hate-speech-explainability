@@ -81,7 +81,7 @@ def fineTuneModel(modelc, epochs, epoch_save = False):
     modelc.model.train()
     criterion = nn.CrossEntropyLoss()
     optimizer = optim.Adam(modelc.model.parameters(), lr=0.01)
-    losses = pd.DataFrame()
+    losses = pd.DataFrame(columns=["Iteration", "Loss"])
     
     for epoch in tqdm(range(epochs), desc=f"Fine Tuning"):
         for batch in tqdm(modelc.train_loader, desc=f"Epoch progress"):

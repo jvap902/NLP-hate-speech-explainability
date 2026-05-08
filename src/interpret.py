@@ -2,7 +2,7 @@ from captum.attr import LayerIntegratedGradients
 from src import config
 from .dataVisualization import plotAttributions
 
-def explainPrediction(modelc, tokenized_dataset):
+def explainPrediction(modelc, tokenized_dataset, show_graph=True):
     modelc.model.eval()
     
     # wrapper function that Captum can use
@@ -34,4 +34,4 @@ def explainPrediction(modelc, tokenized_dataset):
             all_attr.append(attributions.cpu().detach().numpy())
             all_tokens.append(tokens)
             
-            plotAttributions(all_attr[0], all_tokens[0], "aggressive", save_path=f"output-images/{modelc.name}-aggressive-ig.png", show=True)
+            plotAttributions(all_attr[0], all_tokens[0], "aggressive", save_path=f"output-images/{modelc.name}-aggressive-ig.png", show=show_graph)
