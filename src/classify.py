@@ -77,10 +77,10 @@ def evaluateModel(modelc, loader):
     return stats
     
     
-def fineTuneModel(modelc, epochs, epoch_save = False):
+def fineTuneModel(modelc, epochs, epoch_save = False, lr=2e-5):
     modelc.model.train()
-    criterion = nn.CrossEntropyLoss()
-    optimizer = optim.Adam(modelc.model.parameters(), lr=0.01)
+    criterion = nn.BCEWithLogitsLoss()
+    optimizer = optim.Adam(modelc.model.parameters(), lr=lr)
     losses = pd.DataFrame(columns=["Iteration", "Loss"])
     
     for epoch in tqdm(range(epochs), desc=f"Fine Tuning"):
