@@ -77,13 +77,14 @@ def evaluateModel(modelc, loader):
     return stats
     
     
-def fineTuneModel(modelc, epochs, epoch_save = False, lr=2e-5):
+def fineTuneModel(modelc, epochs, epoch_save=True, losses_csv=f'losses/BERTimbau-base.csv', lr=2e-5):
     modelc.model.train()
     criterion = nn.BCEWithLogitsLoss()
     optimizer = optim.Adam(modelc.model.parameters(), lr=lr)
     losses = pd.DataFrame(columns=["Iteration", "Loss"])
     
     for epoch in tqdm(range(epochs), desc=f"Fine Tuning"):
+        running_loss = 0.0
         for batch in tqdm(modelc.train_loader, desc=f"Epoch progress"):
             input_ids = batch['input_ids'].to(config.device)
             attention_mask = batch['attention_mask'].to(config.device)
@@ -100,10 +101,13 @@ def fineTuneModel(modelc, epochs, epoch_save = False, lr=2e-5):
             loss = criterion(logits, labels)
             loss.backward()
             optimizer.step()
+            
+            running_loss = loss.item()
         
         #validate(modelc)
         
-        losses.loc[len(losses)] = {'Iteration': epoch, 'Loss': loss}
+        losses.loc[len(losses)] = {'Iteration': epoch, 'Loss': running_loss}
+        losses.to_csv(losses_csv, mode='a', index=True)
         
         if epoch_save: modelc.saveModel(trained_epochs=1)
         
