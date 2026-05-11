@@ -1,8 +1,9 @@
 from captum.attr import LayerIntegratedGradients
-from src import config
-from .dataVisualization import plotAttributions
 import pandas as pd
 from tqdm import tqdm
+from src import config
+from src.fileHandler import findInCsv, writeCsvLine
+from .dataVisualization import plotAttributions
 
 
 def explainPrediction(modelc, tokenized_dataset, show_graph=True):
@@ -29,16 +30,35 @@ def explainPrediction(modelc, tokenized_dataset, show_graph=True):
         tokens = modelc.tokenizer.convert_ids_to_tokens(input_ids[0])
         tokens = [t for t in tokens if t not in ['[CLS]', '[SEP]']]
         
-        df_sentence = pd.DataFrame({'token': tokens})
+        id = getTextId(tokens)
+        
+        df_sentence = pd.DataFrame({'text_id': id, 'token': tokens})
         
         for target_idx, class_name in tqdm(enumerate(config.classes), desc="Attributing values"):
             attributions = lig.attribute(inputs=input_ids, target=target_idx, n_steps=50)
             attr_array = attributions.sum(dim=-1).squeeze(0).cpu().detach().numpy()
             
             df_sentence[class_name] = attr_array[1:-1] #remove [cls, sep]
+            
+        df_sentence.to_csv(f"{config.ig_results_dir}/{modelc.name}.csv")
         
-        plotAttributions(df_sentence, i, save_path=f"output-images/{modelc.name}-ig.png", show=show_graph)
+        plotAttributions(df_sentence, i, save_path=f"{config.ig_results_dir}/images/{modelc.name}-ig.png", show=show_graph)
         
         del df_sentence
             
-        
+def getTextId(tokens, text_id_csv=f"{config.ig_results_dir}/text-id.csv"):
+    
+    text = " ".join(tokens)
+    
+    df = pd.read_csv(text_id_csv)
+    
+    row = df[df['text'] == text]
+    
+    if len(row) == 0:
+        writeCsvLine(text_id_csv, [len(df), text])
+        return len(df)
+    
+    else:
+        return row["id"]
+    
+    #procurar por texto/id, se não tiver incluir novo e retornar, se existir apenas retornar

@@ -21,11 +21,11 @@ if __name__ == "__main__":
     
         modelc, losses = classify.fineTuneModel(modelc, 15, epoch_save=True, losses_csv=f'losses/{modelc.name}.csv')
     
-        #dataVisualization.plotLosses(losses, save_path=f"output-images/{modelc.name}-loss.png", show=False)
+        #dataVisualization.plotLosses(losses, saveshow=False)
     
         #classify.evaluateModel(modelc, modelc.test_loader)
     
-        modelc.saveModel()
+        #modelc.saveModel()
         
         ig_dataset = loadDataset.igDataset()
         
@@ -37,6 +37,6 @@ if __name__ == "__main__":
 
         #print(ig_predictions)
         
-        interpret.explainPrediction(modelc, ig_tokenized, show_graph=True)
+        interpret.explainPrediction(modelc, ig_tokenized, show_graph=False)
         
         del modelc

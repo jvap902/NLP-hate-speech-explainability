@@ -1,4 +1,5 @@
 import json
+import csv
 
 def updateJson(json_path, fields, values, increment=None):
     with open(json_path, "r+") as f:
@@ -34,3 +35,31 @@ def getJsonInfo(json_path, fields=[]):
 def writeJson(json_path, dic):
     with open(json_path, "w") as f:
         json.dump(dic, f, indent=4)
+        
+def writeCsvLine(file_path, data):
+    with open(file_path, 'a', newline='') as csvfile:
+        csvwriter = csv.writer(csvfile)
+
+        csvwriter.writerow(data)
+
+def findInCsv(file_path, params, values):
+    if(len(params) != len(values)):
+        raise ValueError("The number of parameters should be the as the number of values serched")
+    
+    with open(file_path, mode='r', newline='', encoding='utf-8') as file:
+        reader = list(csv.DictReader(file))
+        
+        ans = []
+        
+        for row in reader:
+            all_equal = True
+            
+            for idx, param in enumerate(params):
+                if (str(values[idx]) != row[param]):
+                    all_equal = False
+                    break
+            
+            if all_equal:
+                ans.append(row)
+                
+    return ans
