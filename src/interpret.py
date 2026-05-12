@@ -30,7 +30,9 @@ def explainPrediction(modelc, tokenized_dataset, show_graph=True):
         tokens = modelc.tokenizer.convert_ids_to_tokens(input_ids[0])
         tokens = [t for t in tokens if t not in ['[CLS]', '[SEP]']]
         
-        id = getTextId(tokens)
+        id_val = getTextId(tokens).iloc[0]
+        
+        id = [id_val] * len(tokens)
         
         df_sentence = pd.DataFrame({'text_id': id, 'token': tokens})
         
@@ -42,7 +44,7 @@ def explainPrediction(modelc, tokenized_dataset, show_graph=True):
             
         df_sentence.to_csv(f"{config.ig_results_dir}/{modelc.name}.csv")
         
-        plotAttributions(df_sentence, i, save_path=f"{config.ig_results_dir}/images/{modelc.name}-ig.png", show=show_graph)
+        plotAttributions(df_sentence, i, save_path=f"{config.ig_results_dir}/images/{modelc.name}-{id_val}-ig.png", show=show_graph)
         
         del df_sentence
             

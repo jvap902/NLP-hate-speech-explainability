@@ -20,3 +20,5 @@ model_save_dir = "fine-tuned-models"
 fine_tune_info_path = f"{model_save_dir}/info.json"
 
 ig_results_dir = "ig-results"
+
+losses_dir = "losses"

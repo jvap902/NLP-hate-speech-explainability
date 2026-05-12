@@ -8,6 +8,7 @@ from rich.console import Console
 from rich.markdown import Markdown
 from rich.panel import Panel
 from . import config
+from .logging import LivePanel
 
 console = Console()
 
@@ -42,7 +43,9 @@ def loadTuPyE(train_size=-1, test_size=-1): #-1 quer dizer carregar inteiro
     
     dataset_link = "Silly-Machine/TuPyE-Dataset" #https://huggingface.co/datasets/Silly-Machine/TuPyE-Dataset
     
-    console.print(Markdown("\n ## Loading dataset via Hugging Face \n"))
+    dataset_panel = LivePanel("Loading dataset via [bold blue]Hugging Face[/]")
+    
+    dataset_panel.start()
             
     try:
         
@@ -54,23 +57,23 @@ def loadTuPyE(train_size=-1, test_size=-1): #-1 quer dizer carregar inteiro
                     
         if(Path(f'./data/{dir_name}').is_dir()):
             
-            console.print(Markdown("###Loading already downloaded dataset"))
+            dataset_panel.addMessage("## Loading already downloaded dataset")
             
             train = load_from_disk(f'./data/{dir_name}/train')
             test = load_from_disk(f'./data/{dir_name}/test')
         
         #caso seja necessário baixar
         else:
-            console.print(Markdown("\n### Downloading huggingface dataset"))
+            dataset_panel.addMessage("\n## Downloading huggingface dataset")
             
             train = load_dataset(dataset_link, "multilabel", split="train")
             test = load_dataset(dataset_link, "multilabel", split="test")
             
-            console.print("Selecionando índices para os subsets")
+            dataset_panel.addMessage("Selecionando índices para os subsets")
             if train_size != -1: train = train.select(stratifiedIndices(train, train_size))
             if test_size != -1: test = test.select(stratifiedIndices(test, test_size))
             
-            console.print("Salvando subsets em disco")
+            dataset_panel.addMessage("Salvando subsets em disco")
             train.save_to_disk(f'./data/{dir_name}/train')
             test.save_to_disk(f'./data/{dir_name}/test')
             
@@ -79,11 +82,13 @@ def loadTuPyE(train_size=-1, test_size=-1): #-1 quer dizer carregar inteiro
         train = train.with_format("torch", columns=config.classes)
         test = test.with_format("torch", columns=config.classes)
         
-        console.print(Markdown(f"\n### Datasets loaded"))
+        dataset_panel.addMessage(f"\n### Datasets loaded")
         
     except Exception as e:
          raise RuntimeError(f"Failed to load Hugging Face Dataset: {e}")
-     
+    
+    dataset_panel.stop()
+    
     return train, test
 
 

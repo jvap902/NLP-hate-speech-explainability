@@ -19,9 +19,9 @@ if __name__ == "__main__":
         
         #classify.evaluateModel(modelc, modelc.test_loader)
     
-        modelc, losses = classify.fineTuneModel(modelc, 15, epoch_save=True, losses_csv=f'losses/{modelc.name}.csv')
+        #modelc, losses = classify.fineTuneModel(modelc, 15, epoch_save=True, losses_csv=f'losses/{modelc.name}.csv')
     
-        #dataVisualization.plotLosses(losses, saveshow=False)
+        #dataVisualization.plotLosses(losses, save_path=f"losses/{modelc.name}.png", show=False)
     
         #classify.evaluateModel(modelc, modelc.test_loader)
     
@@ -33,9 +33,9 @@ if __name__ == "__main__":
         
         ig_loader = DataLoader(ig_tokenized, batch_size=32, shuffle=False, num_workers=4)
         
-        #ig_predictions = classify.classifyInputs(modelc, ig_loader)
+        ig_predictions = classify.classifyInputs(modelc, ig_loader)
 
-        #print(ig_predictions)
+        print(ig_predictions)
         
         interpret.explainPrediction(modelc, ig_tokenized, show_graph=False)
         
