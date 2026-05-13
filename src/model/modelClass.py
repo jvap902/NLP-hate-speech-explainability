@@ -1,13 +1,10 @@
 from transformers import AutoModelForSequenceClassification, AutoTokenizer
 from torch.utils.data import DataLoader
 from pathlib import Path
-from rich.console import Console
-from rich.markdown import Markdown
 from .modelUtils import *
 from .. import config
 from .. import fileHandler
-
-console = Console()
+from ..logging import LivePanel
 
 class Model():
     def __init__(self, model_link, model_name):
@@ -16,10 +13,16 @@ class Model():
         
         self.save_dir = f"{config.model_save_dir}/{self.name}"
         
+        self.panel = LivePanel("# Loading Model", color="green")
+        self.panel.start()
+        
         if Path(self.save_dir).is_dir():
             self.loadModel()
         else:
             self.newModel()
+        
+        self.panel.addMessage("### Model loaded")
+        self.panel.stop()
         
         self.model.to(config.device)
         
@@ -29,7 +32,7 @@ class Model():
         
     def newModel(self):
         
-        console.print(Markdown(f"\n ## Creating new {self.name} \n"))
+        self.panel.addMessage(f"\n ## Creating new {self.name} \n")
         
         if 'gemma' in self.name:
             self.model, self.tokenizer = getGemma(self)
@@ -40,7 +43,7 @@ class Model():
         
     def loadModel(self):
         
-        console.print(Markdown(f"\n ## Loading saved model at {self.save_dir} \n"))
+        self.panel.addMessage(f"\n ## Loading saved model at {self.save_dir} \n")
         
         self.tokenizer = AutoTokenizer.from_pretrained(self.save_dir)
         self.model = AutoModelForSequenceClassification.from_pretrained(

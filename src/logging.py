@@ -8,9 +8,10 @@ from rich.markdown import Markdown
 messages = []
 
 class LivePanel():
-    def __init__(self, title):
+    def __init__(self, title, color="blue"):
         self.title = title
         self.messages = []
+        self.color = color
         
         self.live = Live(self, refresh_per_second=4, auto_refresh=True)
         
@@ -27,4 +28,4 @@ class LivePanel():
         
     def __rich__(self):        
         message_group = Group(*[Markdown(m) for m in self.messages])
-        return Panel(message_group, title=self.title, border_style="blue")
+        return Panel(message_group, title=self.title, border_style=self.color)

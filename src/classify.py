@@ -6,6 +6,8 @@ from sklearn.metrics import classification_report, f1_score, accuracy_score
 import pandas as pd
 import shutil
 from . import config
+from .fileHandler import getJsonInfo
+from .model.modelClass import Model
 
 try:
     from google.colab import files
@@ -77,11 +79,15 @@ def evaluateModel(modelc, loader):
     return stats
     
     
-def fineTuneModel(modelc, epochs, epoch_save=True, losses_csv=f'losses/BERTimbau-base.csv', lr=2e-5):
+def fineTuneModel(modelc: Model, total_epochs, epoch_save=True, losses_csv=f'losses/BERTimbau-base.csv', lr=2e-5):
     modelc.model.train()
     criterion = nn.BCEWithLogitsLoss()
     optimizer = optim.Adam(modelc.model.parameters(), lr=lr)
     losses = pd.DataFrame(columns=["Iteration", "Loss"])
+    
+    trained_epochs = getJsonInfo(config.fine_tune_info_path, [modelc.name])[0]
+    
+    epochs = total_epochs - trained_epochs
     
     for epoch in tqdm(range(epochs), desc=f"Fine Tuning"):
         running_loss = 0.0
@@ -115,7 +121,7 @@ def fineTuneModel(modelc, epochs, epoch_save=True, losses_csv=f'losses/BERTimbau
             shutil.make_archive(modelc.name, 'zip', {modelc.save_dir})
             files.download(f'{modelc.name}.zip')
             
-    return modelc, losses
+    return modelc
 
 
 def validate(modelc):
