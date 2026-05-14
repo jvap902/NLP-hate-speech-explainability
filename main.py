@@ -17,9 +17,9 @@ if __name__ == "__main__":
         
         modelc.getLoader(train, test, batch_size=32)
         
-        classify.evaluateModel(modelc, modelc.test_loader)
+        #classify.evaluateModel(modelc, modelc.test_loader)
     
-        modelc = classify.fineTuneModel(modelc, 10, epoch_save=True, losses_csv=f'losses/{modelc.name}.csv')
+        modelc = classify.fineTuneModel(modelc, 20, epoch_save=True, losses_csv=f'losses/{modelc.name}.csv')
     
         #dataVisualization.plotLosses(losses, save_path=f"losses/{modelc.name}.png", show=False)
     

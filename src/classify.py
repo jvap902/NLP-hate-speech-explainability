@@ -3,11 +3,13 @@ import torch.optim as optim
 from torch import nn
 from tqdm import tqdm
 from sklearn.metrics import classification_report, f1_score, accuracy_score
+from transformers import get_linear_schedule_with_warmup
 import pandas as pd
 import shutil
 from . import config
 from .fileHandler import getJsonInfo
 from .model.modelClass import Model
+from pathlib import Path
 
 try:
     from google.colab import files
@@ -77,52 +79,106 @@ def evaluateModel(modelc, loader):
     print(f"Accuracy: {acc:.4f}")
     
     return stats
+
+def computePosWeight(train_loader, num_classes: int, device) -> torch.Tensor:
+    """
+    Calcula o pos_weight para BCEWithLogitsLoss baseado na frequência de cada classe.
+    pos_weight[i] = (nº exemplos negativos da classe i) / (nº exemplos positivos da classe i)
+    Isso compensa o desbalanceamento do TuPyE-E.
+    """
+    pos_counts = torch.zeros(num_classes)
+    total = 0
+
+    for batch in train_loader:
+        labels = torch.stack([batch[col] for col in config.classes], dim=1).float()
+        pos_counts += labels.sum(dim=0).cpu()
+        total += labels.shape[0]
+
+    neg_counts = total - pos_counts
+    # Clamp para evitar divisão por zero em classes sem exemplos positivos
+    pos_weight = (neg_counts / pos_counts.clamp(min=1)).to(device)
+    return pos_weight
     
-    
-def fineTuneModel(modelc: Model, total_epochs, epoch_save=True, losses_csv=f'losses/BERTimbau-base.csv', lr=2e-5):
+def fineTuneModel( modelc: Model, total_epochs: int, epoch_save: bool = True, losses_csv: str = 'losses/BERTimbau-base.csv', lr: float = 2e-5, warmup_ratio: float = 0.1, weight_decay: float = 0.01, max_grad_norm: float = 1.0, use_pos_weight: bool = True):
     modelc.model.train()
-    criterion = nn.BCEWithLogitsLoss()
-    optimizer = optim.Adam(modelc.model.parameters(), lr=lr)
-    losses = pd.DataFrame(columns=["Iteration", "Loss"])
-    
+
+    # para compensar desbalanceamento de classes
+    if use_pos_weight:
+        pos_weight = computePosWeight(modelc.train_loader, len(config.classes), config.device)
+        criterion = nn.BCEWithLogitsLoss(pos_weight=pos_weight)
+    else:
+        criterion = nn.BCEWithLogitsLoss()
+
+    no_decay = ["bias", "LayerNorm.weight"]
+    optimizer_grouped_parameters = [
+        {
+            "params": [p for n, p in modelc.model.named_parameters() if not any(nd in n for nd in no_decay)],
+            "weight_decay": weight_decay,
+        },
+        {
+            "params": [p for n, p in modelc.model.named_parameters() if any(nd in n for nd in no_decay)],
+            "weight_decay": 0.0,
+        },
+    ]
+    optimizer = optim.AdamW(optimizer_grouped_parameters, lr=lr)
+
     trained_epochs = getJsonInfo(config.fine_tune_info_path, [modelc.name])[0]
-    
     epochs = total_epochs - trained_epochs
-    
-    for epoch in tqdm(range(epochs), desc=f"Fine Tuning"):
+    total_steps = epochs * len(modelc.train_loader)
+    warmup_steps = int(total_steps * warmup_ratio)
+
+    scheduler = get_linear_schedule_with_warmup(
+        optimizer,
+        num_warmup_steps=warmup_steps,
+        num_training_steps=total_steps,
+    )
+
+    losses = pd.DataFrame(columns=["Epoch", "Avg_Loss", "LR"])
+
+    for epoch in tqdm(range(epochs), desc="Fine Tuning"):
+        modelc.model.train()
         running_loss = 0.0
-        for batch in tqdm(modelc.train_loader, desc=f"Epoch progress"):
-            input_ids = batch['input_ids'].to(config.device)
+
+        for batch in tqdm(modelc.train_loader, desc=f"Epoch {trained_epochs + epoch + 1}"):
+            input_ids      = batch['input_ids'].to(config.device)
             attention_mask = batch['attention_mask'].to(config.device)
-            
-            # Stack your 13 labels into a single matrix
-            labels = torch.stack([batch[col] for col in config.classes], dim=1).float()
-            labels = labels.to(config.device)
+            labels         = torch.stack(
+                [batch[col] for col in config.classes], dim=1
+            ).float().to(config.device)
 
             optimizer.zero_grad()
 
             outputs = modelc.model(input_ids=input_ids, attention_mask=attention_mask)
-            logits = outputs.logits
-            
+            logits  = outputs.logits
+
             loss = criterion(logits, labels)
             loss.backward()
+
+            torch.nn.utils.clip_grad_norm_(modelc.model.parameters(), max_grad_norm)
+
             optimizer.step()
-            
-            running_loss = loss.item()
-        
-        #validate(modelc)
-        
-        losses.loc[len(losses)] = {'Iteration': epoch, 'Loss': running_loss}
-        losses.to_csv(losses_csv, mode='a', index=True)
-        
-        if epoch_save: modelc.saveModel(trained_epochs=1)
-        
-        if IN_COLAB: #caso esteja no colab já baixa uma cópia para não perder por limite de tempo
-            shutil.make_archive(modelc.name, 'zip', {modelc.save_dir})
+            scheduler.step()
+
+            running_loss += loss.item()
+
+        avg_loss = running_loss / len(modelc.train_loader)
+        current_lr = scheduler.get_last_lr()[0]
+
+        losses.loc[len(losses)] = {
+            'Epoch': trained_epochs + epoch + 1,
+            'Avg_Loss': avg_loss,
+            'LR': current_lr,
+        }
+        losses.to_csv(losses_csv, mode='a', header=not Path(losses_csv).exists(), index=False)
+
+        evaluateModel(modelc, modelc.test_loader)
+        modelc.model.train()
+
+        if epoch_save:
+            modelc.saveModel(trained_epochs=1)
+
+        if IN_COLAB:
+            shutil.make_archive(modelc.name, 'zip', modelc.save_dir)
             files.download(f'{modelc.name}.zip')
-            
+
     return modelc
-
-
-def validate(modelc):
-    raise NotImplementedError

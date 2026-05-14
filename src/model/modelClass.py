@@ -13,7 +13,7 @@ class Model():
         
         self.save_dir = f"{config.model_save_dir}/{self.name}"
         
-        self.panel = LivePanel("# Loading Model", color="green")
+        self.panel = LivePanel("Loading Model", color="green")
         self.panel.start()
         
         if Path(self.save_dir).is_dir():
@@ -27,7 +27,7 @@ class Model():
         self.model.to(config.device)
         
     def getLoader(self, train, test, batch_size):
-        self.train_loader = DataLoader(self.tokenize(train), batch_size=batch_size, shuffle=False, num_workers=4)
+        self.train_loader = DataLoader(self.tokenize(train), batch_size=batch_size, shuffle=True, num_workers=4)
         self.test_loader = DataLoader(self.tokenize(test), batch_size=batch_size, shuffle=False, num_workers=4)
         
     def newModel(self):
@@ -57,11 +57,13 @@ class Model():
         self.model.save_pretrained(self.save_dir)
         self.tokenizer.save_pretrained(self.save_dir)
         
-    def tokenizeInstance(self, instance):
-        return self.tokenizer(instance["text"], padding="max_length", truncation=True, max_length=512) #talvez tenha que alterar isso no futuro
-        
     def tokenize(self, dataset):
         
-        tokenized_dataset = dataset.map(self.tokenizeInstance, batched=True)
+        tokenizer = self.tokenizer
+        
+        def tokenizeInstance(instance):
+            return tokenizer(instance["text"], padding="max_length", truncation=True, max_length=512)
+        
+        tokenized_dataset = dataset.map(tokenizeInstance, batched=True)
         
         return tokenized_dataset.with_format(type="torch", columns=["input_ids", "attention_mask"] + config.classes) #coloca no formato do PyTorch
