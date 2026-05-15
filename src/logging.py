@@ -1,4 +1,3 @@
-import time
 from rich.live import Live
 from rich.panel import Panel
 from rich.console import Group
