@@ -3,7 +3,7 @@ import torch.optim as optim
 from torch import nn
 from tqdm import tqdm
 from sklearn.metrics import classification_report, f1_score, accuracy_score
-from transformers import get_linear_schedule_with_warmup
+from transformers import Trainer, TrainingArguments
 import pandas as pd
 import shutil
 from . import config
@@ -17,6 +17,42 @@ try:
 except (ImportError, ModuleNotFoundError):
     IN_COLAB = False
     files = None
+
+def compute_metrics(pred):
+    labels = pred.label_ids
+    preds = pred.predictions.argmax(-1)
+    # print(preds)
+    f1_mi = f1_score(labels, preds, average='micro')
+    f1_ma = f1_score(labels, preds, average='macro')
+    acc = accuracy_score(labels, preds)
+    return {
+        'accuracy': acc,
+        'f1-macro': f1_ma,
+        'f1-micro': f1_mi
+    }
+    
+def getTrainingArgs():
+    batch_size = 8
+    epochs = 5
+    learning_rate = 3e-05
+    steps_per_epoch = round(len(train_dataset_tokenized) / batch_size)
+    print(len(train_dataset_tokenized), len(train_dataset_tokenized), steps_per_epoch)
+    
+    training_args = TrainingArguments(
+    output_dir='test_trainer',
+    #overwrite_output_dir=True,
+    eval_strategy='epoch',
+    save_strategy ='epoch',
+    per_device_train_batch_size = batch_size,
+    per_device_eval_batch_size = batch_size,
+    logging_steps=20,
+    report_to="none",
+    learning_rate=learning_rate,
+    num_train_epochs = epochs,
+    load_best_model_at_end = True,
+    #   report_to='tensorboard'
+        )
+
 
 def classifyInputs(modelc, loader): #preliminar
     all_texts = []

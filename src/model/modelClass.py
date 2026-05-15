@@ -27,6 +27,9 @@ class Model():
         self.model.to(config.device)
         
     def getLoader(self, train, test, batch_size):
+        self.train_dataset = train
+        self.test_dataset = test
+        
         self.train_loader = DataLoader(self.tokenize(train), batch_size=batch_size, shuffle=True, num_workers=4)
         self.test_loader = DataLoader(self.tokenize(test), batch_size=batch_size, shuffle=False, num_workers=4)
         
