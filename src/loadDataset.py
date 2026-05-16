@@ -101,3 +101,17 @@ def igDataset():
     dataset = pd.DataFrame(dataset, columns=['text'] + config.classes)
     
     return Dataset.from_pandas(dataset)
+
+def prepareDataset(tokenized_ds):
+    """
+    Junta as colunas individuais de classe numa coluna 'labels' float32,
+    que é o que o Trainer procura.
+    """
+    def mergeLabels(example):
+        example["labels"] = [float(example[c]) for c in config.classes]
+        return example
+
+    ds = tokenized_ds.map(mergeLabels)
+    ds = ds.remove_columns(config.classes)
+    ds.set_format(type="torch", columns=["input_ids", "attention_mask", "labels"])
+    return ds

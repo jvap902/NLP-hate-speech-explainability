@@ -1,4 +1,4 @@
-from transformers import AutoModelForSequenceClassification, AutoTokenizer
+from transformers import AutoModelForSequenceClassification, AutoTokenizer, Trainer, DataCollatorWithPadding
 from torch.utils.data import DataLoader
 from pathlib import Path
 from .modelUtils import *
@@ -27,11 +27,16 @@ class Model():
         self.model.to(config.device)
         
     def getLoader(self, train, test, batch_size):
-        self.train_dataset = train
-        self.test_dataset = test
+        self.train_tokenized = self.tokenize(train)
+        self.test_tokenized = self.tokenize(test)
         
-        self.train_loader = DataLoader(self.tokenize(train), batch_size=batch_size, shuffle=True, num_workers=4)
-        self.test_loader = DataLoader(self.tokenize(test), batch_size=batch_size, shuffle=False, num_workers=4)
+        self.data_collator = DataCollatorWithPadding(self.tokenizer)
+        
+        torch_tokenized_train = self.train_tokenized.with_format(type="torch", columns=["input_ids", "attention_mask", "labels"]) #coloca no formato do PyTorch
+        torch_tokenized_test = self.test_tokenized.with_format(type="torch", columns=["input_ids", "attention_mask", "labels"]) #coloca no formato do PyTorch
+        
+        self.train_loader = DataLoader(torch_tokenized_train, batch_size=batch_size, shuffle=True, num_workers=4, collate_fn=self.data_collator)
+        self.test_loader = DataLoader(torch_tokenized_test, batch_size=batch_size, shuffle=False, num_workers=4, collate_fn=self.data_collator)
         
     def newModel(self):
         
@@ -55,8 +60,12 @@ class Model():
             problem_type="multi_label_classification"
         )
         
-    def saveModel(self, trained_epochs=0):
-        fileHandler.updateJson(json_path=config.fine_tune_info_path, fields=[self.name], values=[trained_epochs], increment=[True])
+    def saveModel(self, repeats=0):
+        model_data = fileHandler.getJsonInfo(config.fine_tune_info_path, [self.name])[0]
+        
+        model_data["repeats"] += repeats
+        
+        fileHandler.updateJson(json_path=config.fine_tune_info_path, fields=[self.name], values=[model_data])
         self.model.save_pretrained(self.save_dir)
         self.tokenizer.save_pretrained(self.save_dir)
         
@@ -65,8 +74,21 @@ class Model():
         tokenizer = self.tokenizer
         
         def tokenizeInstance(instance):
-            return tokenizer(instance["text"], padding="max_length", truncation=True, max_length=512)
+            tokens = tokenizer(instance["text"], truncation=True, max_length=512)
+            tokens["labels"] = [[float(instance[c][i]) for c in config.classes] for i in range(len(instance["text"]))]
+            return tokens
         
-        tokenized_dataset = dataset.map(tokenizeInstance, batched=True)
+        ds = dataset.map(tokenizeInstance, batched=True, remove_columns=config.classes)
+        return ds
+    
+    def getTrainer(self, epochs_fold, compute_metrics):
+        training_args = getTrainingArgs(self, epochs_fold)
         
-        return tokenized_dataset.with_format(type="torch", columns=["input_ids", "attention_mask"] + config.classes) #coloca no formato do PyTorch
+        self.trainer = Trainer(
+            model=self.model,
+            args=training_args,
+            train_dataset=self.train_tokenized,
+            eval_dataset=self.test_tokenized,
+            compute_metrics=compute_metrics,
+            data_collator=self.data_collator
+        )

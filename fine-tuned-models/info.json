@@ -1,3 +1,18 @@
 {
-    "BERTimbau-base": 5
+    "BERTimbau-base": {
+        "repeats": 5,
+        "folds": 3,
+        "epochs_fold": 5,
+        "eval": {
+            "eval_loss": 0.0006687615532428026,
+            "eval_model_preparation_time": 0.002,
+            "eval_accuracy": 0.9975956033890543,
+            "eval_f1-macro": 0.9933103493025061,
+            "eval_f1-micro": 0.9971048060220035,
+            "eval_runtime": 6.8572,
+            "eval_samples_per_second": 1273.694,
+            "eval_steps_per_second": 39.812,
+            "epoch": 0
+        }
+    }
 }

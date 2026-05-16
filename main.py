@@ -17,21 +17,20 @@ if __name__ == "__main__":
         
         modelc.getLoader(train, test, batch_size=32)
         
-        #classify.evaluateModel(modelc, modelc.test_loader)
-    
-        modelc = classify.fineTuneModel(modelc, 20, epoch_save=True, losses_csv=f'losses/{modelc.name}.csv')
+        modelc.getTrainer(epochs_fold=5, compute_metrics=classify.compute_metrics)
+            
+        #modelc = classify.fineTune(modelc, repeat=4)
+        
+        eval_data = classify.testModel(modelc)
+        print(eval_data)
     
         #dataVisualization.plotLosses(losses, save_path=f"losses/{modelc.name}.png", show=False)
-    
-        #classify.evaluateModel(modelc, modelc.test_loader)
-    
-        #modelc.saveModel()
-        
+                
         ig_dataset = loadDataset.igDataset()
         
-        ig_tokenized = modelc.tokenize(ig_dataset)
+        ig_tokenized = modelc.tokenize(ig_dataset).with_format(type="torch", columns=["input_ids", "attention_mask", "labels"])
         
-        ig_loader = DataLoader(ig_tokenized, batch_size=32, shuffle=False, num_workers=4)
+        ig_loader = DataLoader(ig_tokenized, batch_size=32, shuffle=False, num_workers=4, collate_fn=modelc.data_collator)
         
         ig_predictions = classify.classifyInputs(modelc, ig_loader)
 

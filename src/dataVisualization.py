@@ -4,9 +4,10 @@ import pandas as pd
 import numpy as np
 from src import config
 
-def plotAttributions(df, input_index, save_path=None, show=True):
+def plotAttributions(df: pd.DataFrame, input_index, save_path=None, show=True):
     # 1. Converter de Wide (uma coluna por classe) para Long (formato do Seaborn)
     # Isso coloca todas as atribuições em uma única coluna 'Score' e os nomes das classes em 'Classe'
+    df = df.drop(columns=["text_id"])
     df_long = df.melt(id_vars=["token"], var_name="Class", value_name="Attribution")
 
     plt.figure(figsize=(14, 7))

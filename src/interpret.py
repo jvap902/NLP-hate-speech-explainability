@@ -8,6 +8,9 @@ from .dataVisualization import plotAttributions
 
 def explainPrediction(modelc, tokenized_dataset, show_graph=True):
     modelc.model.eval()
+    
+    df_attributions = pd.DataFrame()
+    
     #wrapper
     def forward_func(input_ids):
         return modelc.model(input_ids).logits
@@ -41,12 +44,14 @@ def explainPrediction(modelc, tokenized_dataset, show_graph=True):
             attr_array = attributions.sum(dim=-1).squeeze(0).cpu().detach().numpy()
             
             df_sentence[class_name] = attr_array[1:-1] #remove [cls, sep]
-            
-        df_sentence.to_csv(f"{config.ig_results_dir}/{modelc.name}.csv")
         
         plotAttributions(df_sentence, i, save_path=f"{config.ig_results_dir}/images/{modelc.name}-{id_val}-ig.png", show=show_graph)
         
+        df_attributions = pd.concat([df_attributions, df_sentence], axis=0, ignore_index=True)
+        
         del df_sentence
+        
+    df_attributions.to_csv(f"{config.ig_results_dir}/{modelc.name}.csv", header=True)
             
 def getTextId(tokens, text_id_csv=f"{config.ig_results_dir}/text-id.csv"):
     
