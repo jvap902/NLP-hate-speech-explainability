@@ -1,17 +1,27 @@
 {
     "BERTimbau-base": {
-        "repeats": 5,
-        "folds": 3,
-        "epochs_fold": 5,
         "eval": {
-            "eval_loss": 0.0006687615532428026,
-            "eval_model_preparation_time": 0.002,
-            "eval_accuracy": 0.9975956033890543,
-            "eval_f1-macro": 0.9933103493025061,
-            "eval_f1-micro": 0.9971048060220035,
-            "eval_runtime": 6.8572,
-            "eval_samples_per_second": 1273.694,
-            "eval_steps_per_second": 39.812,
+            "eval_loss": 0.043473340570926666,
+            "eval_model_preparation_time": 0.0015,
+            "eval_accuracy": 0.8992443324937027,
+            "eval_f1-macro": 0.6350120740589265,
+            "eval_f1-micro": 0.933844575255171,
+            "eval_runtime": 7.2615,
+            "eval_samples_per_second": 1202.776,
+            "eval_steps_per_second": 37.595,
+            "epoch": 0
+        }
+    },
+    "BERTimbau-large": {
+        "eval": {
+            "eval_loss": 0.04163656383752823,
+            "eval_model_preparation_time": 0.003,
+            "eval_accuracy": 0.9145866727730707,
+            "eval_f1-macro": 0.8523006032680783,
+            "eval_f1-micro": 0.9483167889512301,
+            "eval_runtime": 18.7236,
+            "eval_samples_per_second": 466.469,
+            "eval_steps_per_second": 14.58,
             "epoch": 0
         }
     }

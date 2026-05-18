@@ -1,6 +1,7 @@
 from transformers import AutoModelForSequenceClassification, AutoTokenizer, Trainer, DataCollatorWithPadding
 from torch.utils.data import DataLoader
 from pathlib import Path
+import numpy as np
 from .modelUtils import *
 from .. import config
 from .. import fileHandler
@@ -43,9 +44,9 @@ class Model():
         self.panel.addMessage(f"\n ## Creating new {self.name} \n")
         
         if 'gemma' in self.name:
-            self.model, self.tokenizer = getGemma(self)
+            self.model, self.tokenizer, self.config = getGemma(self)
         if 'bertimbau' in self.name.lower():
-            self.model, self.tokenizer = getBERTimbau(self)
+            self.model, self.tokenizer, self.config = getBERTimbau(self)
         else:
             raise ValueError("Unsupported model")
         
@@ -56,7 +57,7 @@ class Model():
         self.tokenizer = AutoTokenizer.from_pretrained(self.save_dir)
         self.model = AutoModelForSequenceClassification.from_pretrained(
             self.save_dir,
-            num_labels=len(config.classes),
+            num_labels=len(config.model_classes),
             problem_type="multi_label_classification"
         )
         
@@ -75,10 +76,25 @@ class Model():
         
         def tokenizeInstance(instance):
             tokens = tokenizer(instance["text"], truncation=True, max_length=512)
-            tokens["labels"] = [[float(instance[c][i]) for c in config.classes] for i in range(len(instance["text"]))]
+            
+            labels = []
+            batch_size=len(instance["text"])
+            
+            for i in range(batch_size):
+                row = [np.float32(instance[c][i]) for c in config.dataset_classes]
+
+                # not_hate = 1 se hate == 0, reproduzindo o que os autores fizeram
+                not_hate = 1.0 - np.float32(instance["hate"][i])
+                row.append(not_hate)
+
+                labels.append(row)
+
+            tokens["labels"] = labels
+            
             return tokens
         
-        ds = dataset.map(tokenizeInstance, batched=True, remove_columns=config.classes)
+        cols_to_remove = ["text"]
+        ds = dataset.map(tokenizeInstance, batched=True, remove_columns=cols_to_remove)
         return ds
     
     def getTrainer(self, epochs_fold, compute_metrics):

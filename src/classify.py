@@ -1,12 +1,11 @@
 import torch
 from tqdm import tqdm
 from sklearn.metrics import f1_score, accuracy_score
-from datasets import concatenate_datasets
 from sklearn.model_selection import KFold
 import pandas as pd
 from . import config
 from .model.modelClass import Model
-from .fileHandler import getJsonInfo, updateJson
+from .fileHandler import getJsonInfo, updateJson, writeCsvLine
 
 try:
     from google.colab import files
@@ -31,22 +30,23 @@ def compute_metrics(pred):
         'f1-micro': f1_mi
     }
 
-def fineTune(modelc: Model, repeat=0):
-    
-    full_dataset = concatenate_datasets([modelc.train_tokenized, modelc.test_tokenized])
+def fineTune(modelc: Model, repeat: int):
     
     for r in range(repeat):
     
         kf = KFold(n_splits=3, shuffle=True, random_state=42)
         
-        for train_index, test_index in kf.split(full_dataset):
-            train_split = full_dataset.select(train_index)
-            val_split = full_dataset.select(test_index)
+        for train_index, test_index in kf.split(modelc.train_tokenized):
+            train_split = modelc.train_tokenized.select(train_index)
+            val_split = modelc.train_tokenized.select(test_index)
             
             modelc.trainer.train_dataset = train_split
-            modelc.trainer.train()
+            train_output = modelc.trainer.train()
+            loss = train_output.training_loss
             
-            modelc.trainer.evaluate(eval_dataset=val_split) 
+            val_data = modelc.trainer.evaluate(eval_dataset=val_split)
+            
+            writeCsvLine(f"{config.losses_dir}/{modelc.name}", [r, val_data['accuracy'], val_data['f1-macro'], val_data['f1-micro'], loss])
             
         modelc.saveModel(1)
     

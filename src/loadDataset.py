@@ -25,7 +25,7 @@ def loadToken(file_path):
 def stratifiedIndices(dataset, subset_size):
     
     # 1. Extract labels
-    y = np.array([dataset[col] for col in config.classes]).T
+    y = np.array([dataset[col] for col in config.dataset_classesclasses]).T
     
     # 2. Create indices
     indices = np.arange(len(y)).reshape(-1, 1)
@@ -79,8 +79,8 @@ def loadTuPyE(train_size=-1, test_size=-1): #-1 quer dizer carregar inteiro
             
         
         #depois de carregados, coloca em formato do pytorch
-        train = train.with_format("torch", columns=config.classes)
-        test = test.with_format("torch", columns=config.classes)
+        train = train.with_format("torch", columns=config.dataset_classes)
+        test = test.with_format("torch", columns=config.dataset_classes)
         
         dataset_panel.addMessage(f"\n### Datasets loaded")
         
@@ -93,12 +93,13 @@ def loadTuPyE(train_size=-1, test_size=-1): #-1 quer dizer carregar inteiro
 
 
 def igDataset():    
+    #                                                          hate  age  apo  bod  cap  lgb  pol  rac  rel  mis  xen  oth
     dataset = [
-        ["Eu queria dar um soco nele", 1, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0],
-        ["Texto neutro de exemplo",     0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0]
+        ["O Dono desse twitter é autista, só pode kkkkkkkk",      1,    0,   0,   0,   1,   0,   0,   0,   0,   0,   0,   0],
+        ["Texto neutro de exemplo",                                0,    0,   0,   0,   0,   0,   0,   0,   0,   0,   0,   0],
     ]
     
-    dataset = pd.DataFrame(dataset, columns=['text'] + config.classes)
+    dataset = pd.DataFrame(dataset, columns=['text', 'hate'] + config.dataset_classes)
     
     return Dataset.from_pandas(dataset)
 
@@ -108,10 +109,10 @@ def prepareDataset(tokenized_ds):
     que é o que o Trainer procura.
     """
     def mergeLabels(example):
-        example["labels"] = [float(example[c]) for c in config.classes]
+        example["labels"] = [np.float32(example[c]) for c in config.dataset_classes]
         return example
 
     ds = tokenized_ds.map(mergeLabels)
-    ds = ds.remove_columns(config.classes)
+    ds = ds.remove_columns(config.dataset_classes)
     ds.set_format(type="torch", columns=["input_ids", "attention_mask", "labels"])
     return ds

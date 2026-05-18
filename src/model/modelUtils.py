@@ -1,6 +1,6 @@
 from .. import config
 from torch.cuda import is_available
-from transformers import GemmaForSequenceClassification, AutoTokenizer, BertForSequenceClassification, TrainingArguments
+from transformers import GemmaForSequenceClassification, AutoTokenizer, AutoModelForSequenceClassification, TrainingArguments, AutoConfig
 
 def getTrainingArgs(modelc, epochs, batch_size=32, lr=3e-05):
         steps_per_epoch = round(len(modelc.train_tokenized) / batch_size)
@@ -29,21 +29,17 @@ def getGemma(modelc):
     
     model = GemmaForSequenceClassification.from_pretrained(
         modelc.link,
-        num_labels=len(config.classes),
+        num_labels=len(config.model_classes),
         problem_type="multi_label_classification"
     )
     
     model.config.pad_token_id = tokenizer.pad_token_id
     
-    return model, tokenizer
+    return model, tokenizer #achar config
 
 def getBERTimbau(modelc):
+    model = AutoModelForSequenceClassification.from_pretrained(modelc.link, problem_type="multi_label_classification")
     tokenizer = AutoTokenizer.from_pretrained(modelc.link)
+    config = AutoConfig.from_pretrained(modelc.link)
     
-    model = BertForSequenceClassification.from_pretrained(
-        modelc.link,
-        num_labels=len(config.classes),
-        problem_type="multi_label_classification"
-    )
-    
-    return model, tokenizer
+    return model, tokenizer, config

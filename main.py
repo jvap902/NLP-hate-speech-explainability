@@ -1,8 +1,11 @@
 from torch.utils.data import DataLoader
-import pandas as pd
-from rich.console import Console
-from rich.markdown import Markdown
+import argparse
 from src import *
+
+parser = argparse.ArgumentParser()
+parser.add_argument("-m", "--model", type=str, required=False, default="BERTimbau-base", help="Specify a model name present in config.models")
+
+args = parser.parse_args()
 
 if __name__ == "__main__":
     
@@ -12,30 +15,33 @@ if __name__ == "__main__":
     
     models = config.models
     
-    for key, value in models.items(): #apenas testando se é possível carregar
-        modelc = Model(value, key)
-        
-        modelc.getLoader(train, test, batch_size=32)
-        
-        modelc.getTrainer(epochs_fold=5, compute_metrics=classify.compute_metrics)
-            
-        #modelc = classify.fineTune(modelc, repeat=4)
-        
-        eval_data = classify.testModel(modelc)
-        print(eval_data)
+    name = args.model
+    link = models[name]
     
-        #dataVisualization.plotLosses(losses, save_path=f"losses/{modelc.name}.png", show=False)
-                
-        ig_dataset = loadDataset.igDataset()
-        
-        ig_tokenized = modelc.tokenize(ig_dataset).with_format(type="torch", columns=["input_ids", "attention_mask", "labels"])
-        
-        ig_loader = DataLoader(ig_tokenized, batch_size=32, shuffle=False, num_workers=4, collate_fn=modelc.data_collator)
-        
-        ig_predictions = classify.classifyInputs(modelc, ig_loader)
+    modelc = Model(link, name)
+    
+    modelc.getLoader(train, test, batch_size=32)
+    
+    modelc.getTrainer(epochs_fold=5, compute_metrics=classify.compute_metrics)
+    
+    if "tupy" not in modelc.link.lower():
+        modelc = classify.fineTune(modelc, repeat=4)
+    
+    eval_data = classify.testModel(modelc)
+    print(eval_data)
 
-        print(ig_predictions)
-        
-        interpret.explainPrediction(modelc, ig_tokenized, show_graph=False)
-        
-        del modelc
+    #dataVisualization.plotLosses(losses, save_path=f"losses/{modelc.name}.png", show=False)
+            
+    ig_dataset = loadDataset.igDataset()
+    
+    ig_tokenized = modelc.tokenize(ig_dataset).with_format(type="torch", columns=["input_ids", "attention_mask", "labels"])
+    
+    ig_loader = DataLoader(ig_tokenized, batch_size=32, shuffle=False, num_workers=4, collate_fn=modelc.data_collator)
+    
+    ig_predictions = classify.classifyInputs(modelc, ig_loader)
+
+    print(ig_predictions)
+    
+    interpret.explainPrediction(modelc, ig_tokenized, show_graph=False)
+    
+    del modelc

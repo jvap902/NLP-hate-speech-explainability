@@ -28,7 +28,10 @@ def getJsonInfo(json_path, fields=[]):
     data = []
 
     for field in fields:
-        data.append(json_data[field])
+        if field in json_data.keys():
+            data.append(json_data[field])
+        else:
+            data.append({}) #se campo não existir, vira dicionário vazio
         
     return data
 
@@ -36,8 +39,8 @@ def writeJson(json_path, dic):
     with open(json_path, "w") as f:
         json.dump(dic, f, indent=4)
         
-def writeCsvLine(file_path, data):
-    with open(file_path, 'a', newline='') as csvfile:
+def writeCsvLine(file_path, data, encoding='utf-8-sig'):
+    with open(file_path, 'a', newline='', encoding=encoding) as csvfile:
         csvwriter = csv.writer(csvfile)
 
         csvwriter.writerow(data)

@@ -4,11 +4,13 @@ import torch
 device = "cuda" if torch.cuda.is_available() else "cpu"
 
 #classes da classificação multilabel
-classes = ['aggressive', 'hate', 'ageism', 'aporophobia', 'body_shame', 'capacitism', 'lgbtphobia', 'political', 'racism', 'religious_intolerance', 'misogyny', 'xenophobia', 'other']
+dataset_classes = ['ageism', 'aporophobia', 'body_shame', 'capacitism', 'lgbtphobia', 'political', 'racism', 'religious_intolerance', 'misogyny', 'xenophobia', 'other']
+
+model_classes = ["ageism", "aporophobia", "body_shame", "capacitism", "lgbtphobia", "political", "racism", "religious_intolerance", "misogyny", "xenophobia", "other", "not_hate"]
 
 models = {
-    "BERTimbau-base": "neuralmind/bert-base-portuguese-cased",
-    "BERTimbau-large": "neuralmind/bert-large-portuguese-cased",
+    "BERTimbau-base": "Silly-Machine/TuPy-Bert-Base-Multilabel",
+    "BERTimbau-large": "Silly-Machine/TuPy-Bert-Large-Multilabel",
     "Albertina": "PORTULAN/albertina-900m-portuguese-ptbr-encoder-brwac", #talvez trocar para versão menor
     "Bernice": "jhu-clsp/bernice",
     "Gemma": "google/gemma-4-E4B-it",
