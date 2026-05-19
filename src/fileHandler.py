@@ -1,5 +1,15 @@
+import os
 import json
 import csv
+
+def createFile(file_path, content):
+    
+    if os.path.isfile(file_path):
+        print("Arquivo já existente")
+    else:
+        print("Arquivo não existente, criando novo")
+        with open(file_path, mode="a", newline='', encoding='utf-8') as f:
+            f.write(content)
 
 def updateJson(json_path, fields, values, increment=None):
     with open(json_path, "r+") as f:

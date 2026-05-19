@@ -5,6 +5,13 @@ from src import config
 from src.fileHandler import findInCsv, writeCsvLine
 from .dataVisualization import plotAttributions
 
+def getEmbeddingsLayer(model):
+    # cada arquitetura expõe embeddings com um nome diferente
+    for attr in ['bert', 'deberta', 'roberta', 'albert', 'electra', 'xlnet', 'distilbert']:
+        if hasattr(model, attr):
+            return getattr(model, attr).embeddings
+    raise AttributeError(f"Não foi possível encontrar a camada de embeddings em {type(model).__name__}. "
+                         f"Atributos disponíveis: {[n for n, _ in model.named_children()]}")
 
 def explainPrediction(modelc, tokenized_dataset, show_graph=True):
     modelc.model.eval()
@@ -16,7 +23,7 @@ def explainPrediction(modelc, tokenized_dataset, show_graph=True):
         return modelc.model(input_ids).logits
 
     # Using modelc.model.bert.embeddings for BERTimbau
-    lig = LayerIntegratedGradients(forward_func, modelc.model.bert.embeddings)
+    lig = LayerIntegratedGradients(forward_func, getEmbeddingsLayer(modelc.model))
     
     for i in range(len(tokenized_dataset)):
         

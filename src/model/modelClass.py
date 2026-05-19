@@ -44,11 +44,11 @@ class Model():
         self.panel.addMessage(f"\n ## Creating new {self.name} \n")
         
         if 'gemma' in self.name:
-            self.model, self.tokenizer, self.config = getGemma(self)
+            self.model, self.tokenizer = getGemma(self)
         if 'bertimbau' in self.name.lower():
-            self.model, self.tokenizer, self.config = getBERTimbau(self)
+            self.model, self.tokenizer = getBERTimbau(self)
         else:
-            raise ValueError("Unsupported model")
+            self.model, self.tokenizer = getGeneric(self)
         
     def loadModel(self):
         
@@ -64,7 +64,10 @@ class Model():
     def saveModel(self, repeats=0):
         model_data = fileHandler.getJsonInfo(config.fine_tune_info_path, [self.name])[0]
         
-        model_data["repeats"] += repeats
+        if "repeats" in model_data:
+            model_data["repeats"] += repeats
+        else:
+            model_data["repeats"] = repeats
         
         fileHandler.updateJson(json_path=config.fine_tune_info_path, fields=[self.name], values=[model_data])
         self.model.save_pretrained(self.save_dir)

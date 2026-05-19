@@ -4,6 +4,7 @@ from src import *
 
 parser = argparse.ArgumentParser()
 parser.add_argument("-m", "--model", type=str, required=False, default="BERTimbau-base", help="Specify a model name present in config.models")
+parser.add_argument("-nf", "--no_fine_tune", required=False, action='store_true', default=False, help="Disable fine-tuning process")
 
 args = parser.parse_args()
 
@@ -23,9 +24,9 @@ if __name__ == "__main__":
     modelc.getLoader(train, test, batch_size=32)
     
     modelc.getTrainer(epochs_fold=5, compute_metrics=classify.compute_metrics)
-    
-    if "tupy" not in modelc.link.lower():
-        modelc = classify.fineTune(modelc, repeat=4)
+        
+    if "tupy" not in modelc.link.lower() and not args.no_fine_tune:
+        modelc = classify.fineTune(modelc, repeat=2)
     
     eval_data = classify.testModel(modelc)
     print(eval_data)

@@ -5,7 +5,7 @@ from sklearn.model_selection import KFold
 import pandas as pd
 from . import config
 from .model.modelClass import Model
-from .fileHandler import getJsonInfo, updateJson, writeCsvLine
+from .fileHandler import getJsonInfo, updateJson, writeCsvLine, createFile
 
 try:
     from google.colab import files
@@ -42,11 +42,12 @@ def fineTune(modelc: Model, repeat: int):
             
             modelc.trainer.train_dataset = train_split
             train_output = modelc.trainer.train()
-            loss = train_output.training_loss
+            train_output.training_loss
             
             val_data = modelc.trainer.evaluate(eval_dataset=val_split)
             
-            writeCsvLine(f"{config.losses_dir}/{modelc.name}", [r, val_data['accuracy'], val_data['f1-macro'], val_data['f1-micro'], loss])
+            createFile(f"{config.losses_dir}/{modelc.name}.csv", "repeat,accuracy,f1-macro,f1-micro,loss")
+            writeCsvLine(f"{config.losses_dir}/{modelc.name}.csv", [r, val_data['eval_accuracy'], val_data['eval_f1-macro'], val_data['eval_f1-micro'], val_data["eval_loss"]])
             
         modelc.saveModel(1)
     
