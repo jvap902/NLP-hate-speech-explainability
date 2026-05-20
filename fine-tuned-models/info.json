@@ -6,9 +6,9 @@
             "eval_accuracy": 0.8994733226471262,
             "eval_f1-macro": 0.635273911641239,
             "eval_f1-micro": 0.9340605929686234,
-            "eval_runtime": 7.1001,
-            "eval_samples_per_second": 1230.125,
-            "eval_steps_per_second": 38.45,
+            "eval_runtime": 7.2704,
+            "eval_samples_per_second": 1201.306,
+            "eval_steps_per_second": 37.549,
             "epoch": 0
         }
     },
@@ -26,17 +26,16 @@
         }
     },
     "Albertina": {
-        "repeats": 2,
+        "repeats": 3,
         "eval": {
-            "eval_loss": 0.08204824477434158,
-            "eval_model_preparation_time": 0.002,
-            "eval_accuracy": 0.8354705747652851,
-            "eval_f1-macro": 0.42779823220521845,
-            "eval_f1-micro": 0.8833694445912382,
-            "eval_runtime": 83.5419,
-            "eval_samples_per_second": 104.546,
-            "eval_steps_per_second": 26.143,
-            "epoch": 0
+            "eval_loss": 0.10341983288526535,
+            "eval_accuracy": 0.8310052667735287,
+            "eval_f1-macro": 0.43942972987356677,
+            "eval_f1-micro": 0.8829424418909702,
+            "eval_runtime": 106.0107,
+            "eval_samples_per_second": 82.388,
+            "eval_steps_per_second": 20.602,
+            "epoch": 5.0
         }
     }
 }

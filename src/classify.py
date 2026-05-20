@@ -32,7 +32,14 @@ def compute_metrics(pred):
 
 def fineTune(modelc: Model, repeat: int):
     
-    for r in range(repeat):
+    model_info = getJsonInfo(config.fine_tune_info_path, [modelc.name])[0]
+    
+    if "repeats" in model_info:
+        r_ini = model_info["repeats"]
+    else:
+        r_ini = 0
+    
+    for r in range(r_ini, repeat):
     
         kf = KFold(n_splits=3, shuffle=True, random_state=42)
         
