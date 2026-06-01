@@ -24,7 +24,7 @@ if __name__ == "__main__":
     modelc.getLoader(train, test, batch_size=32)
     
     modelc.getTrainer(epochs_fold=5, compute_metrics=classify.compute_metrics)
-        
+    
     if "tupy" not in modelc.link.lower() and not args.no_fine_tune:
         modelc = classify.fineTune(modelc, repeat=3)
     

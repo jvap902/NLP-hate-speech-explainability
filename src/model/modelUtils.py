@@ -1,6 +1,7 @@
-from ..config import model_classes
+import re
 import torch
-from transformers import GemmaForSequenceClassification, AutoTokenizer, AutoModelForSequenceClassification, TrainingArguments, AutoConfig
+from ..config import model_classes
+from transformers import GemmaForSequenceClassification, AutoModel, AutoTokenizer, AutoModelForSequenceClassification, TrainingArguments, AutoConfig
 
 def getTrainingArgs(modelc, epochs, batch_size=32, lr=3e-05):
         steps_per_epoch = round(len(modelc.train_tokenized) / batch_size)
@@ -17,7 +18,7 @@ def getTrainingArgs(modelc, epochs, batch_size=32, lr=3e-05):
         training_args = TrainingArguments(
             output_dir='fine-tuned-models',
             eval_strategy='no',
-            save_strategy ='best',
+            save_strategy ='no',
             per_device_train_batch_size = batch_size,
             per_device_eval_batch_size = batch_size,
             gradient_accumulation_steps=acc_steps,
@@ -58,6 +59,23 @@ def getBERTimbau(modelc):
 def getGeneric(modelc):
     model = AutoModelForSequenceClassification.from_pretrained(modelc.link, num_labels=len(model_classes), problem_type="multi_label_classification")
     model.config.problem_type = "multi_label_classification"
+    
     tokenizer = AutoTokenizer.from_pretrained(modelc.link)
     
     return model, tokenizer
+
+def getBernice(modelc):
+    model = AutoModelForSequenceClassification.from_pretrained(modelc.link, num_labels=len(model_classes),ignore_mismatched_sizes=True)
+    model.config.problem_type = "multi_label_classification"
+
+    tokenizer = AutoTokenizer.from_pretrained(modelc.link, model_max_length=128)
+
+    return model, tokenizer
+
+BERNICE_URL_RE    = re.compile(r"https?:\/\/[\w\.\/\?\=\d&#%_:/-]+")
+BERNICE_HANDLE_RE = re.compile(r"@\w+")
+
+def bernicePreprocess(text):
+    text = BERNICE_HANDLE_RE.sub("@USER", text)
+    text = BERNICE_URL_RE.sub("HTTPURL", text)
+    return text

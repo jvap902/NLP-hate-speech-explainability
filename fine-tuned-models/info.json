@@ -37,5 +37,18 @@
             "eval_steps_per_second": 20.602,
             "epoch": 5.0
         }
+    },
+    "Bernice": {
+        "repeats": 3,
+        "eval": {
+            "eval_loss": 0.12387088686227798,
+            "eval_accuracy": 0.8345546141515915,
+            "eval_f1-macro": 0.49418781937952305,
+            "eval_f1-micro": 0.8834426659669378,
+            "eval_runtime": 6.3171,
+            "eval_samples_per_second": 1382.592,
+            "eval_steps_per_second": 43.216,
+            "epoch": 5.0
+        }
     }
 }

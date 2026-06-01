@@ -45,8 +45,10 @@ class Model():
         
         if 'gemma' in self.name:
             self.model, self.tokenizer = getGemma(self)
-        if 'bertimbau' in self.name.lower():
+        elif 'bertimbau' in self.name.lower():
             self.model, self.tokenizer = getBERTimbau(self)
+        elif 'bernice' in self.name.lower():
+            self.model, self.tokenizer = getBernice(self)
         else:
             self.model, self.tokenizer = getGeneric(self)
         
@@ -76,9 +78,17 @@ class Model():
     def tokenize(self, dataset):
         
         tokenizer = self.tokenizer
+        is_bernice = 'bernice' in self.name.lower()
+        max_length = tokenizer.model_max_length
         
         def tokenizeInstance(instance):
-            tokens = tokenizer(instance["text"], truncation=True, max_length=512)
+            
+            texts = instance["text"]
+            
+            if is_bernice:
+                texts = [bernicePreprocess(t) for t in texts]
+            
+            tokens = tokenizer(texts, truncation=True, max_length=max_length)
             
             labels = []
             batch_size=len(instance["text"])
