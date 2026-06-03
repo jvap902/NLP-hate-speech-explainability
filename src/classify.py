@@ -1,13 +1,11 @@
 import torch
-import torch.optim as optim
-from torch import nn
 from tqdm import tqdm
-from sklearn.metrics import classification_report, f1_score, accuracy_score
+from sklearn.metrics import f1_score, accuracy_score
+from sklearn.model_selection import KFold
 import pandas as pd
-import shutil
 from . import config
-from .fileHandler import getJsonInfo
 from .model.modelClass import Model
+from .fileHandler import getJsonInfo, updateJson, writeCsvLine, createFile
 
 try:
     from google.colab import files
@@ -15,6 +13,64 @@ try:
 except (ImportError, ModuleNotFoundError):
     IN_COLAB = False
     files = None
+
+def compute_metrics(pred):
+    logits = torch.Tensor(pred.predictions)
+    labels = pred.label_ids.astype(int)
+    
+    probs = torch.sigmoid(logits).cpu().numpy()
+    preds = (probs >= 0.5).astype(int)
+
+    f1_mi = f1_score(labels, preds, average='micro')
+    f1_ma = f1_score(labels, preds, average='macro')
+    acc = accuracy_score(labels, preds)
+    return {
+        'accuracy': acc,
+        'f1-macro': f1_ma,
+        'f1-micro': f1_mi
+    }
+
+def fineTune(modelc: Model, repeat: int):
+    
+    model_info = getJsonInfo(config.fine_tune_info_path, [modelc.name])[0]
+    
+    if "repeats" in model_info:
+        r_ini = model_info["repeats"]
+    else:
+        r_ini = 0
+    
+    for r in range(r_ini, repeat):
+    
+        kf = KFold(n_splits=3, shuffle=True, random_state=42)
+        
+        for train_index, test_index in kf.split(modelc.train_tokenized):
+            train_split = modelc.train_tokenized.select(train_index)
+            val_split = modelc.train_tokenized.select(test_index)
+            
+            modelc.trainer.train_dataset = train_split
+            train_output = modelc.trainer.train()
+            train_output.training_loss
+            
+            val_data = modelc.trainer.evaluate(eval_dataset=val_split)
+            
+            createFile(f"{config.losses_dir}/{modelc.name}.csv", "repeat,accuracy,f1-macro,f1-micro,loss")
+            writeCsvLine(f"{config.losses_dir}/{modelc.name}.csv", [r, val_data['eval_accuracy'], val_data['eval_f1-macro'], val_data['eval_f1-micro'], val_data["eval_loss"]])
+            
+        modelc.saveModel(1)
+    
+    return modelc
+
+def testModel(modelc: Model):
+    modelc.trainer.eval_dataset = modelc.test_tokenized
+    eval_data = modelc.trainer.evaluate()
+    
+    model_data = getJsonInfo(config.fine_tune_info_path, [modelc.name])[0]
+        
+    model_data["eval"] = eval_data
+    
+    updateJson(json_path=config.fine_tune_info_path, fields=[modelc.name], values=[model_data])
+    
+    return eval_data
 
 def classifyInputs(modelc, loader): #preliminar
     all_texts = []
@@ -24,6 +80,7 @@ def classifyInputs(modelc, loader): #preliminar
     modelc.model.eval()
     with torch.no_grad():
         for batch in tqdm(loader, desc="classifying"): #para teste
+            
             # Move inputs to GPU
             input_ids = batch['input_ids'].to(config.device)
             attention_mask = batch['attention_mask'].to(config.device)
@@ -35,8 +92,8 @@ def classifyInputs(modelc, loader): #preliminar
             all_preds.extend(binary_preds.cpu().tolist())
             
             #true labels
-            labels = torch.stack([batch[col] for col in config.classes], dim=1)
-            all_labels.extend(labels.cpu().tolist())
+            labels = batch['labels'].cpu().numpy().astype(int)
+            all_labels.extend(labels.tolist())
             
             # Se o loader não tiver a chave 'text', decodificamos os input_ids
             if 'text' in batch:
@@ -52,77 +109,3 @@ def classifyInputs(modelc, loader): #preliminar
     })
     
     return df
-
-def evaluateModel(modelc, loader):
-    df_results = classifyInputs(modelc, loader)
-
-    preds, labels = df_results["preds"].tolist(), df_results["labels"].tolist()
-
-    stats = classification_report(
-        labels, 
-        preds, 
-        target_names=config.classes, 
-        zero_division=0,
-        output_dict=True
-    )
-
-    print(stats)
-
-    micro_f1 = f1_score(labels, preds, average='micro')
-    macro_f1 = f1_score(labels, preds, average='macro')
-    acc = accuracy_score(labels, preds)
-
-    print(f"Micro F1: {micro_f1:.4f}")
-    print(f"Macro F1: {macro_f1:.4f}")
-    print(f"Accuracy: {acc:.4f}")
-    
-    return stats
-    
-    
-def fineTuneModel(modelc: Model, total_epochs, epoch_save=True, losses_csv=f'losses/BERTimbau-base.csv', lr=2e-5):
-    modelc.model.train()
-    criterion = nn.BCEWithLogitsLoss()
-    optimizer = optim.Adam(modelc.model.parameters(), lr=lr)
-    losses = pd.DataFrame(columns=["Iteration", "Loss"])
-    
-    trained_epochs = getJsonInfo(config.fine_tune_info_path, [modelc.name])[0]
-    
-    epochs = total_epochs - trained_epochs
-    
-    for epoch in tqdm(range(epochs), desc=f"Fine Tuning"):
-        running_loss = 0.0
-        for batch in tqdm(modelc.train_loader, desc=f"Epoch progress"):
-            input_ids = batch['input_ids'].to(config.device)
-            attention_mask = batch['attention_mask'].to(config.device)
-            
-            # Stack your 13 labels into a single matrix
-            labels = torch.stack([batch[col] for col in config.classes], dim=1).float()
-            labels = labels.to(config.device)
-
-            optimizer.zero_grad()
-
-            outputs = modelc.model(input_ids=input_ids, attention_mask=attention_mask)
-            logits = outputs.logits
-            
-            loss = criterion(logits, labels)
-            loss.backward()
-            optimizer.step()
-            
-            running_loss = loss.item()
-        
-        #validate(modelc)
-        
-        losses.loc[len(losses)] = {'Iteration': epoch, 'Loss': running_loss}
-        losses.to_csv(losses_csv, mode='a', index=True)
-        
-        if epoch_save: modelc.saveModel(trained_epochs=1)
-        
-        if IN_COLAB: #caso esteja no colab já baixa uma cópia para não perder por limite de tempo
-            shutil.make_archive(modelc.name, 'zip', {modelc.save_dir})
-            files.download(f'{modelc.name}.zip')
-            
-    return modelc
-
-
-def validate(modelc):
-    raise NotImplementedError
