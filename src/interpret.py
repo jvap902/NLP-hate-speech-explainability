@@ -25,6 +25,9 @@ def explainPrediction(modelc, tokenized_dataset, show_graph=True):
     # Using modelc.model.bert.embeddings for BERTimbau
     lig = LayerIntegratedGradients(forward_func, getEmbeddingsLayer(modelc.model))
     
+    # pega tokens speciais de acordo com o modelo
+    special_tokens = set(modelc.tokenizer.all_special_tokens)    
+    
     for i in range(len(tokenized_dataset)):
         
         instance = tokenized_dataset[i]
@@ -37,7 +40,11 @@ def explainPrediction(modelc, tokenized_dataset, show_graph=True):
         input_ids = instance['input_ids'][:actual_length].unsqueeze(0).to(config.device)
         
         # Pegamos os tokens correspondentes a esse corte
-        tokens = modelc.tokenizer.convert_ids_to_tokens(input_ids[0])
+        all_tokens = modelc.tokenizer.convert_ids_to_tokens(input_ids[0])
+        
+        token_mask = [t not in special_tokens for t in all_tokens]
+        tokens     = [t for t, keep in zip(all_tokens, token_mask) if keep]
+        
         tokens = [t for t in tokens if t not in ['[CLS]', '[SEP]']]
         
         id_val = getTextId(tokens)
@@ -50,7 +57,7 @@ def explainPrediction(modelc, tokenized_dataset, show_graph=True):
             attributions = lig.attribute(inputs=input_ids, target=target_idx, n_steps=50)
             attr_array = attributions.sum(dim=-1).squeeze(0).cpu().detach().numpy()
             
-            df_sentence[class_name] = attr_array[1:-1] #remove [cls, sep]
+            df_sentence[class_name] = attr_array[token_mask] #remove tokens especiais como [cls, sep]
         
         plotAttributions(df_sentence, i, save_path=f"{config.ig_results_dir}/images/{modelc.name}-{id_val}-ig.png", show=show_graph)
         
