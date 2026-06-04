@@ -1,7 +1,8 @@
+import math
+import numpy as np
+import pandas as pd
 import seaborn as sns
 import matplotlib.pyplot as plt
-import pandas as pd
-import numpy as np
 from src import config
 
 def plotAttributions(df: pd.DataFrame, input_index, save_path=None, show=True):
@@ -20,13 +21,16 @@ def plotAttributions(df: pd.DataFrame, input_index, save_path=None, show=True):
     plot = sns.lineplot(data=df_long, x="token", y="Attribution", hue="Class", marker='o', linewidth=1.5, palette="husl")
     
     # 3. Ajustes de escala e estética
-    y_min, y_max = df_long["Attribution"].min(), df_long["Attribution"].max()
-    
     plt.axhline(0, color='black', linestyle='-', alpha=0.3)
     
+    y_min, y_max = df_long["Attribution"].min(), df_long["Attribution"].max()
+    
+    y_min, y_max = math.floor(y_min / 5) * 5, math.ceil(y_max / 5) * 5 # arredonda valores para multiplo de 5
+    
     # Evita que o yticks quebre se os valores forem muito pequenos
-    if abs(y_max - y_min) > 0.1:
-        plt.yticks(np.arange(np.floor(y_min*2)/2, np.ceil(y_max*2)/2 + 0.5, 0.5))
+    ticks = np.linspace(y_min, y_max, 20)
+    ticks = np.round(ticks, 2)
+    plt.yticks(ticks)
 
     plt.xticks(rotation=45, ha='right')
     plt.title(f'Análise de Importância por Classe - Input #{input_index}', fontsize=14)
