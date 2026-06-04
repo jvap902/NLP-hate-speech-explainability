@@ -92,16 +92,15 @@ def loadTuPyE(train_size=-1, test_size=-1): #-1 quer dizer carregar inteiro
     return train, test
 
 
-def igDataset():    
-    #                                                          hate  age  apo  bod  cap  lgb  pol  rac  rel  mis  xen  oth
-    dataset = [
-        ["O Dono desse twitter é autista, só pode kkkkkkkk",      1,    0,   0,   0,   1,   0,   0,   0,   0,   0,   0,   0],
-        ["Texto neutro de exemplo",                                0,    0,   0,   0,   0,   0,   0,   0,   0,   0,   0,   0],
-    ]
+def igDataset(test_dataset):
     
-    dataset = pd.DataFrame(dataset, columns=['text', 'hate'] + config.dataset_classes)
+    instances_df = pd.read_csv('ig-results/instances.csv')
     
-    return Dataset.from_pandas(dataset)
+    indices = instances_df['id'].tolist()
+    
+    ig_dataset = test_dataset.select(indices)
+    
+    return ig_dataset
 
 def prepareDataset(tokenized_ds):
     """

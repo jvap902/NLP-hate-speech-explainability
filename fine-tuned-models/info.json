@@ -6,49 +6,47 @@
             "eval_accuracy": 0.8994733226471262,
             "eval_f1-macro": 0.635273911641239,
             "eval_f1-micro": 0.9340605929686234,
-            "eval_runtime": 7.2704,
-            "eval_samples_per_second": 1201.306,
-            "eval_steps_per_second": 37.549,
-            "epoch": 0
+            "eval_runtime": 7.6803,
+            "eval_samples_per_second": 1137.191,
+            "eval_steps_per_second": 35.545
         }
     },
     "BERTimbau-large": {
         "eval": {
-            "eval_loss": 0.04163656383752823,
-            "eval_model_preparation_time": 0.003,
+            "eval_loss": 0.04162640497088432,
+            "eval_model_preparation_time": 0.007,
             "eval_accuracy": 0.9145866727730707,
-            "eval_f1-macro": 0.8523006032680783,
-            "eval_f1-micro": 0.9483167889512301,
-            "eval_runtime": 18.7236,
-            "eval_samples_per_second": 466.469,
-            "eval_steps_per_second": 14.58,
-            "epoch": 0
+            "eval_f1-macro": 0.8527947851742205,
+            "eval_f1-micro": 0.9483679525222551,
+            "eval_runtime": 19.8873,
+            "eval_samples_per_second": 439.174,
+            "eval_steps_per_second": 13.727
         }
     },
     "Albertina": {
         "repeats": 3,
         "eval": {
             "eval_loss": 0.10341983288526535,
-            "eval_model_preparation_time": 0.001,
+            "eval_model_preparation_time": 0.0069,
             "eval_accuracy": 0.8310052667735287,
             "eval_f1-macro": 0.43942972987356677,
             "eval_f1-micro": 0.8829424418909702,
-            "eval_runtime": 97.7372,
-            "eval_samples_per_second": 89.362,
-            "eval_steps_per_second": 22.346
+            "eval_runtime": 95.8018,
+            "eval_samples_per_second": 91.167,
+            "eval_steps_per_second": 22.797
         }
     },
     "Bernice": {
         "repeats": 3,
         "eval": {
             "eval_loss": 0.12387088686227798,
-            "eval_model_preparation_time": 0.0023,
+            "eval_model_preparation_time": 0.0,
             "eval_accuracy": 0.8345546141515915,
             "eval_f1-macro": 0.49418781937952305,
             "eval_f1-micro": 0.8834426659669378,
-            "eval_runtime": 7.7566,
-            "eval_samples_per_second": 1126.016,
-            "eval_steps_per_second": 35.196
+            "eval_runtime": 7.4844,
+            "eval_samples_per_second": 1166.964,
+            "eval_steps_per_second": 36.476
         }
     }
 }

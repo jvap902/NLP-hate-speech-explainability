@@ -33,7 +33,7 @@ if __name__ == "__main__":
 
     #dataVisualization.plotLosses(losses, save_path=f"losses/{modelc.name}.png", show=False)
             
-    ig_dataset = loadDataset.igDataset()
+    ig_dataset = loadDataset.igDataset(test)
     
     ig_tokenized = modelc.tokenize(ig_dataset).with_format(type="torch", columns=["input_ids", "attention_mask", "labels"])
     

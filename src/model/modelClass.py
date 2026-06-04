@@ -79,7 +79,7 @@ class Model():
         
         tokenizer = self.tokenizer
         is_bernice = 'bernice' in self.name.lower()
-        max_length = tokenizer.model_max_length
+        max_length = min(tokenizer.model_max_length, 512)
         
         def tokenizeInstance(instance):
             

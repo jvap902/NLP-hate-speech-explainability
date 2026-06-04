@@ -45,12 +45,6 @@ def explainPrediction(modelc, tokenized_dataset, show_graph=True):
         token_mask = [t not in special_tokens for t in all_tokens]
         tokens     = [t for t, keep in zip(all_tokens, token_mask) if keep]
         
-        tokens = [t for t in tokens if t not in ['[CLS]', '[SEP]']]
-        
-        id_val = getTextId(tokens)
-        
-        id = [id_val] * len(tokens)
-        
         df_sentence = pd.DataFrame({'text_id': id, 'token': tokens})
         
         for target_idx, class_name in tqdm(enumerate(config.model_classes), desc="Attributing values"):
@@ -59,26 +53,10 @@ def explainPrediction(modelc, tokenized_dataset, show_graph=True):
             
             df_sentence[class_name] = attr_array[token_mask] #remove tokens especiais como [cls, sep]
         
-        plotAttributions(df_sentence, i, save_path=f"{config.ig_results_dir}/images/{modelc.name}-{id_val}-ig.png", show=show_graph)
+        plotAttributions(df_sentence, i, save_path=f"{config.ig_results_dir}/images/{modelc.name}-{i}-ig.png", show=show_graph)
         
         df_attributions = pd.concat([df_attributions, df_sentence], axis=0, ignore_index=True)
         
         del df_sentence
         
     df_attributions.to_csv(f"{config.ig_results_dir}/{modelc.name}.csv", header=True)
-            
-def getTextId(tokens, text_id_csv=f"{config.ig_results_dir}/text-id.csv"):
-    
-    text = " ".join(tokens)
-    df = pd.read_csv(text_id_csv, encoding='utf-8-sig')
-    row = df[df['text'] == text]
-    
-    if len(row) == 0:
-        new_id = len(df)
-        writeCsvLine(text_id_csv, [new_id, text])
-        return new_id
-    
-    else:
-        return int(row["id"].iloc[0])
-    
-    #procurar por texto/id, se não tiver incluir novo e retornar, se existir apenas retornar
