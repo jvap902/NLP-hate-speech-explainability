@@ -13,7 +13,7 @@ def getEmbeddingsLayer(model):
     raise AttributeError(f"Não foi possível encontrar a camada de embeddings em {type(model).__name__}. "
                          f"Atributos disponíveis: {[n for n, _ in model.named_children()]}")
 
-def explainPrediction(modelc, tokenized_dataset, show_graph=True):
+def explainPrediction(modelc, tokenized_dataset, indices, show_graph=True):
     modelc.model.eval()
     
     df_attributions = pd.DataFrame()
@@ -31,6 +31,7 @@ def explainPrediction(modelc, tokenized_dataset, show_graph=True):
     for i in range(len(tokenized_dataset)):
         
         instance = tokenized_dataset[i]
+        text_id = indices[i]
         
         # Usamos a mask para saber onde a frase termina de verdade
         mask = instance['attention_mask']
@@ -45,7 +46,7 @@ def explainPrediction(modelc, tokenized_dataset, show_graph=True):
         token_mask = [t not in special_tokens for t in all_tokens]
         tokens     = [t for t, keep in zip(all_tokens, token_mask) if keep]
         
-        df_sentence = pd.DataFrame({'text_id': id, 'token': tokens})
+        df_sentence = pd.DataFrame({'text_id': text_id, 'token': tokens})
         
         for target_idx, class_name in tqdm(enumerate(config.model_classes), desc="Attributing values"):
             attributions = lig.attribute(inputs=input_ids, target=target_idx, n_steps=50)
@@ -53,7 +54,7 @@ def explainPrediction(modelc, tokenized_dataset, show_graph=True):
             
             df_sentence[class_name] = attr_array[token_mask] #remove tokens especiais como [cls, sep]
         
-        plotAttributions(df_sentence, i, save_path=f"{config.ig_results_dir}/images/{modelc.name}-{i}-ig.png", show=show_graph)
+        plotAttributions(df_sentence, save_path=f"{config.ig_results_dir}/images/{modelc.name}-{text_id}-ig.png", show=show_graph)
         
         df_attributions = pd.concat([df_attributions, df_sentence], axis=0, ignore_index=True)
         

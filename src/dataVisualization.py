@@ -5,7 +5,7 @@ import seaborn as sns
 import matplotlib.pyplot as plt
 from src import config
 
-def plotAttributions(df: pd.DataFrame, input_index, save_path=None, show=True):
+def plotAttributions(df: pd.DataFrame, save_path=None, show=True):
     # 1. Converter de Wide (uma coluna por classe) para Long (formato do Seaborn)
     # Isso coloca todas as atribuições em uma única coluna 'Score' e os nomes das classes em 'Classe'
     df = df.drop(columns=["text_id"])
@@ -33,7 +33,7 @@ def plotAttributions(df: pd.DataFrame, input_index, save_path=None, show=True):
     plt.yticks(ticks)
 
     plt.xticks(rotation=45, ha='right')
-    plt.title(f'Análise de Importância por Classe - Input #{input_index}', fontsize=14)
+    plt.title(f'Análise de Importância por Classe', fontsize=14)
     plt.ylabel('Atribuição (Integrated Gradients)')
     plt.xlabel('Tokens')
     

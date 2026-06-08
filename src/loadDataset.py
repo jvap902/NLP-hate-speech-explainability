@@ -100,7 +100,7 @@ def igDataset(test_dataset):
     
     ig_dataset = test_dataset.select(indices)
     
-    return ig_dataset
+    return ig_dataset, indices
 
 def prepareDataset(tokenized_ds):
     """
