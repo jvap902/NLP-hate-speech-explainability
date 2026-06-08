@@ -4,8 +4,6 @@ from ..config import model_classes
 from transformers import GemmaForSequenceClassification, AutoModel, AutoTokenizer, AutoModelForSequenceClassification, TrainingArguments, AutoConfig
 
 def getTrainingArgs(modelc, epochs, batch_size=32, lr=3e-05):
-        steps_per_epoch = round(len(modelc.train_tokenized) / batch_size)
-        print(len(modelc.train_tokenized), len(modelc.train_tokenized), steps_per_epoch)
         
         supports_bf16 = torch.cuda.is_available() and torch.cuda.is_bf16_supported()
         

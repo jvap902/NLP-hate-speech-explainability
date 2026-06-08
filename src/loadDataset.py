@@ -94,7 +94,7 @@ def loadTuPyE(train_size=-1, test_size=-1): #-1 quer dizer carregar inteiro
 
 def igDataset(test_dataset):
     
-    instances_df = pd.read_csv('ig-results/instances.csv')
+    instances_df = pd.read_csv(f'{config.ig_dir}/instances.csv')
     
     indices = instances_df['id'].tolist()
     

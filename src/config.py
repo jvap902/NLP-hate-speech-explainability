@@ -11,7 +11,7 @@ model_classes = ["ageism", "aporophobia", "body_shame", "capacitism", "lgbtphobi
 models = {
     "BERTimbau-base": "Silly-Machine/TuPy-Bert-Base-Multilabel",
     "BERTimbau-large": "Silly-Machine/TuPy-Bert-Large-Multilabel",
-    "Albertina": "PORTULAN/albertina-900m-portuguese-ptbr-encoder-brwac", #talvez trocar para versão menor
+    "Albertina": "PORTULAN/albertina-900m-portuguese-ptbr-encoder-brwac",
     "Bernice": "jhu-clsp/bernice",
     "Gemma": "google/gemma-4-E4B-it",
     "Llama": "meta-llama/Llama-3.2-1B"
@@ -21,6 +21,6 @@ model_save_dir = "fine-tuned-models"
 
 fine_tune_info_path = f"{model_save_dir}/info.json"
 
-ig_results_dir = "ig-results"
+ig_dir = "ig-results"
 
 losses_dir = "losses"

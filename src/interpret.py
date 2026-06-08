@@ -1,8 +1,9 @@
-from captum.attr import LayerIntegratedGradients
+import ast
+import torch
 import pandas as pd
 from tqdm import tqdm
 from src import config
-from src.fileHandler import findInCsv, writeCsvLine
+from captum.attr import LayerIntegratedGradients
 from .dataVisualization import plotAttributions
 
 def getEmbeddingsLayer(model):
@@ -48,16 +49,71 @@ def explainPrediction(modelc, tokenized_dataset, indices, show_graph=True):
         
         df_sentence = pd.DataFrame({'text_id': text_id, 'token': tokens})
         
+        internal_batch_size = 2  if 'albertina' in modelc.name.lower() else 8
+        
         for target_idx, class_name in tqdm(enumerate(config.model_classes), desc="Attributing values"):
-            attributions = lig.attribute(inputs=input_ids, target=target_idx, n_steps=50)
+            attributions = lig.attribute(inputs=input_ids, target=target_idx, n_steps=50, internal_batch_size=internal_batch_size)
             attr_array = attributions.sum(dim=-1).squeeze(0).cpu().detach().numpy()
+            
+            del attributions
             
             df_sentence[class_name] = attr_array[token_mask] #remove tokens especiais como [cls, sep]
         
-        plotAttributions(df_sentence, save_path=f"{config.ig_results_dir}/images/{modelc.name}-{text_id}-ig.png", show=show_graph)
+        plotAttributions(df_sentence, save_path=f"{config.ig_dir}/images/{modelc.name}-{text_id}-ig.png", show=show_graph)
         
         df_attributions = pd.concat([df_attributions, df_sentence], axis=0, ignore_index=True)
         
         del df_sentence
+        torch.cuda.empty_cache()
         
-    df_attributions.to_csv(f"{config.ig_results_dir}/{modelc.name}.csv", header=True)
+    df_attributions.to_csv(f"{config.ig_dir}/{modelc.name}.csv", header=True)
+
+def compare(modelc, indices, model_attr, human_attr):
+    
+    human_tok = tokenizeRelevantWords(human_attr, modelc.tokenizer)
+    
+    for i in indices:
+        model_inst = model_attr[model_attr["text_id"] == i]
+        human_inst = human_tok[human_tok["text_id"] == i]
+        
+        active_class = human_inst["class"].iloc[0]
+        
+        h_tokens = human_inst["tokens"].to_list()
+        
+        result = True
+        
+        for token_list in h_tokens:
+            
+            m_tokens = model_inst[model_inst["token"].isin(token_list)]
+            
+            imp_values = m_tokens[active_class].to_numpy()
+            
+            result = result and not (imp_values <= 0).any() # False se token que deveria contribuir para uma classe for < 0
+            
+            if not result:
+                print(result)
+                print(imp_values)
+                raise
+        
+        print(result)
+        raise
+        
+
+def tokenizeRelevantWords(human_attr: pd.DataFrame, tokenizer) -> pd.DataFrame:
+    rows = []
+
+    for _, row in human_attr.iterrows():
+        instance_id = row['id']
+        cls         = row['class']
+        words       = ast.literal_eval(row['relevant_words'])  # "[""toma"", ...]" → lista Python
+
+        for word in words:
+            tokens = tokenizer.tokenize(word)  # tokeniza sem adicionar [CLS]/[SEP]
+            rows.append({
+                'text_id': instance_id,
+                'class': cls,
+                'word': word,
+                'tokens': tokens,
+            })
+
+    return pd.DataFrame(rows)
