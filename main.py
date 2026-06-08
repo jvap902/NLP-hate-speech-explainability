@@ -40,6 +40,10 @@ if __name__ == "__main__":
     ig_loader = DataLoader(ig_tokenized, batch_size=32, shuffle=False, num_workers=4, collate_fn=modelc.data_collator)
     
     ig_predictions = classify.classifyInputs(modelc, ig_loader)
+    ig_predictions['model'] = modelc.name
+    ig_predictions['text_id'] = indices
+    ig_predictions = ig_predictions[["model", "text_id", "text", "labels", "preds"]]
+    ig_predictions.to_csv('ig-results/predictions.csv', mode='a', header=False, index=False)
 
     print(ig_predictions)
     

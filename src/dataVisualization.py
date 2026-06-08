@@ -9,19 +9,33 @@ def plotAttributions(df: pd.DataFrame, save_path=None, show=True):
     # 1. Converter de Wide (uma coluna por classe) para Long (formato do Seaborn)
     # Isso coloca todas as atribuições em uma única coluna 'Score' e os nomes das classes em 'Classe'
     df = df.drop(columns=["text_id"])
-    df_long = df.melt(id_vars=["token"], var_name="Class", value_name="Attribution")
-
-    plt.figure(figsize=(14, 7))
+    df['token_position'] = np.arange(len(df))
+    
+    df_long = df.melt(id_vars=["token", "token_position"], var_name="Class", value_name="Attribution")
+    
+    plt.figure(figsize=(18, 8))
     sns.set_theme(style="whitegrid")
 
     # 2. Plotar usando Seaborn
     # x="token" garante que o eixo X não se repita
     # y="Attribution" é o eixo Y (o valor numérico)
     # hue="Class" cria uma linha colorida para cada coluna original de classe
-    plot = sns.lineplot(data=df_long, x="token", y="Attribution", hue="Class", marker='o', linewidth=1.5, palette="husl")
+    subtle_dashes = ["", (4, 2)] * 6  # repeats to cover all 13 classes
+    
+    plot = sns.lineplot(
+        data=df_long, 
+        x="token_position", 
+        y="Attribution", 
+        hue="Class", 
+        style="Class",
+        dashes=subtle_dashes, # Cleans up the line styles
+        linewidth=2.0, 
+        palette="husl"
+    )
     
     # 3. Ajustes de escala e estética
     plt.axhline(0, color='black', linestyle='-', alpha=0.3)
+    plt.xlim(df['token_position'].min(), df['token_position'].max())
     
     y_min, y_max = df_long["Attribution"].min(), df_long["Attribution"].max()
     
@@ -32,7 +46,7 @@ def plotAttributions(df: pd.DataFrame, save_path=None, show=True):
     ticks = np.round(ticks, 2)
     plt.yticks(ticks)
 
-    plt.xticks(rotation=45, ha='right')
+    plt.xticks(ticks=df['token_position'], labels=df['token'], rotation=45, ha='right')
     plt.title(f'Análise de Importância por Classe', fontsize=14)
     plt.ylabel('Atribuição (Integrated Gradients)')
     plt.xlabel('Tokens')
