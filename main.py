@@ -49,7 +49,7 @@ if __name__ == "__main__":
     
     print(f"device set to {config.device}")
     
-    train, test = loadDataset.loadTuPyE(-1, -1) #definir tamanhos dos splits
+    train, test = loadDataset.loadTuPyE(-1, -1)
 
     modelc = loadModelc()
     

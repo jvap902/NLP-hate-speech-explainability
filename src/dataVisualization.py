@@ -82,3 +82,51 @@ def plotLosses(df: pd.DataFrame, save_path=None, show=True):
     if show: plt.show()
     
     plt.close()
+    
+def plotModelComparison(df: pd.DataFrame, target_class: str, model_names: list, save_path=None, show=True):
+    plt.figure(figsize=(14, 8))
+    sns.set_theme(style="whitegrid")
+
+    palette     = sns.color_palette("tab10", n_colors=len(model_names))
+    line_styles = ["-", "--"]
+
+    longest = df.groupby('model')['word'].count().idxmax()
+    x_labels = df[df['model'] == longest]['word'].tolist()
+
+    for idx, model_name in enumerate(model_names):
+        subset = df[df['model'] == model_name].reset_index(drop=True)
+        if subset.empty:
+            continue
+
+        x_positions = range(len(subset))
+
+        plt.plot(
+            x_positions,
+            subset['attribution'],
+            label=model_name,
+            color=palette[idx],
+            linestyle=line_styles[idx % len(line_styles)],
+            marker='o',
+            linewidth=1.5,
+        )
+        
+    y_min, y_max = df["attribution"].min(), df["attribution"].max()
+    
+    y_min, y_max = math.floor(y_min / 5) * 5, math.ceil(y_max / 5) * 5 # arredonda valores para multiplo de 5
+    
+    # Evita que o yticks quebre se os valores forem muito pequenos
+    ticks = np.linspace(y_min, y_max, 20)
+    ticks = np.round(ticks, 2)
+    plt.yticks(ticks)
+
+    plt.xticks(ticks=range(len(x_labels)), labels=x_labels, rotation=45, ha='right')
+    plt.axhline(0, color='black', linestyle='-', alpha=0.3)
+    plt.title(f'Attribution Comparison — {target_class}', fontsize=13)
+    plt.ylabel('Attribution (avg over subwords)')
+    plt.xlabel('Words')
+    plt.legend(bbox_to_anchor=(1.02, 1), loc='upper left', title="Model")
+    plt.tight_layout()
+
+    if save_path: plt.savefig(save_path, dpi=300)
+    if show: plt.show()
+    plt.close()

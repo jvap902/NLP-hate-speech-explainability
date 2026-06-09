@@ -12,9 +12,9 @@ models = {
     "BERTimbau-base": "Silly-Machine/TuPy-Bert-Base-Multilabel",
     "BERTimbau-large": "Silly-Machine/TuPy-Bert-Large-Multilabel",
     "Albertina": "PORTULAN/albertina-900m-portuguese-ptbr-encoder-brwac",
-    "Bernice": "jhu-clsp/bernice",
-    "Gemma": "google/gemma-4-E4B-it",
-    "Llama": "meta-llama/Llama-3.2-1B"
+    "Bernice": "jhu-clsp/bernice"
+    #"Gemma": "google/gemma-4-E4B-it", talvez em um trabalho futuro
+    #"Llama": "meta-llama/Llama-3.2-1B"
 }
 
 model_save_dir = "fine-tuned-models"

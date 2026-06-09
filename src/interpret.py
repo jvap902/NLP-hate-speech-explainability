@@ -119,13 +119,3 @@ def tokenizeRelevantWords(human_attr: pd.DataFrame, tokenizer) -> pd.DataFrame:
             })
 
     return pd.DataFrame(rows)
-
-
-def compareAttr(model_names: list, instances: pd.DataFrame):
-    #função que por instância faz um plot das atribuições dos modelos de acordo com a classe anotada
-    #talvez fazer um "detokenize" para ter as tokenizações em comum
-    
-    indices = instances["id"].to_list()
-    
-    for i in indices:
-        raise NotImplementedError
