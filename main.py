@@ -60,8 +60,8 @@ if __name__ == "__main__":
     if args.new_ig or not Path(f"{config.ig_dir}/{modelc.name}.csv"): attribute(modelc, ig_dataset)
     
     model_attr = pd.read_csv(f'{config.ig_dir}/{modelc.name}.csv')
-    human_attr = pd.read_csv(f'{config.ig_dir}/instances.csv')
+    instances = pd.read_csv(f'{config.ig_dir}/instances.csv')
     
-    #interpret.compare(modelc, indices, model_attr, human_attr)
+    interpret.compare(modelc, model_attr, instances)
     
     del modelc

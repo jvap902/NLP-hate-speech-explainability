@@ -68,9 +68,11 @@ def explainPrediction(modelc, tokenized_dataset, indices, show_graph=True):
         
     df_attributions.to_csv(f"{config.ig_dir}/{modelc.name}.csv", header=True)
 
-def compare(modelc, indices, model_attr, human_attr):
+def compareHumanModel(modelc, model_attr, instances):
     
-    human_tok = tokenizeRelevantWords(human_attr, modelc.tokenizer)
+    indices = instances["id"].to_list()
+    
+    human_tok = tokenizeRelevantWords(instances, modelc.tokenizer)
     
     for i in indices:
         model_inst = model_attr[model_attr["text_id"] == i]
@@ -117,3 +119,13 @@ def tokenizeRelevantWords(human_attr: pd.DataFrame, tokenizer) -> pd.DataFrame:
             })
 
     return pd.DataFrame(rows)
+
+
+def compareAttr(model_names: list, instances: pd.DataFrame):
+    #função que por instância faz um plot das atribuições dos modelos de acordo com a classe anotada
+    #talvez fazer um "detokenize" para ter as tokenizações em comum
+    
+    indices = instances["id"].to_list()
+    
+    for i in indices:
+        raise NotImplementedError
