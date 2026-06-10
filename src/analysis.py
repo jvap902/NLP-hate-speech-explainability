@@ -12,15 +12,23 @@ def compareAttr(model_names: list, instances: pd.DataFrame):
     indices = instances.index.to_list()
     
     for i in tqdm(indices, desc="Comparing model attributions"):
+        
         inst_dfs = []
-        target_class = instances.loc[i]["class"]
+        instance = instances.loc[[i]]
+        target_class = instance["class"].values[0]
+        text = instance["text"].values[0]
+        
+        df = pd.DataFrame()
+        df["word"] = text.split(' ')
         
         for name in model_names:
-            inst_dfs.append(loadAttributions(name, instances.loc[[i]])) #mudar para cada linha ser uma palavra e cada coluna um modelo
+            df[name] = loadAttributions(name, instance)["attribution"]
         
-        inst_dfs = pd.concat(inst_dfs, ignore_index=True)
+        print(df)
         
         dataVisualization.plotModelComparison(inst_dfs, target_class, model_names, save_path=f'analysis/{target_class}-{i}.png', show=False)
+        
+        raise
 
 
 def loadAttributions(model_name, instance) -> pd.DataFrame:
@@ -30,61 +38,68 @@ def loadAttributions(model_name, instance) -> pd.DataFrame:
     """
     path = f"{config.ig_dir}/{model_name}.csv"
     
-    target_class = instance["class"].values
-    words = instance["text"].values
-    text_id = instance.index
-    
-    print(instance)
-    raise
+    target_class = instance["class"].values[0]
+    text = instance["text"].values[0]
+    text_id = instance.index.values[0]
     
     df = pd.read_csv(path, index_col=0)
     df = df[df['text_id'] == text_id].reset_index(drop=True)
 
-    if df.empty:
-        raise(f"text_id {text_id} not found in {model_name}.csv")
-
     tokens = df['token'].tolist()
     attr = df[target_class].values
 
-    avg_attrs = detokenize(tokens, attr, model_name)
+    avg_attrs = detokenize(tokens, attr, text, model_name)
     
-    data = {'model': model_name, 'word': words, 'attribution': avg_attrs}
+    data = {'model': model_name, 'word': text, 'attribution': avg_attrs}
 
-    return pd.DataFrame(data)
+    return data
 
 
 # tokens that always start a new word regardless of ▁
 WORD_START_TOKENS = {'@USER', 'HTTPURL', 'URL'}
 
-def detokenize(tokens: list[str], attributions: np.ndarray, model_name: str):
+def detokenize(tokens: list[str], attributions: np.ndarray, text: str, model_name: str):
     
     #iterar sobre tokens atribuidos: (1) tirar char especiais e (2) "subtrair" da frase o token
     
     is_bert_style = 'bertimbau' in model_name.lower()
 
-    words   = []
-    weights = []
+    words = text.split(' ')
 
+    avg_weights = np.empty(len(words))
+    
+    current_word_idx = 0
+    current_word = words[current_word_idx]
+
+    w_weights = []
+    
     for token, attr in zip(tokens, attributions):
+            
         if is_bert_style:
             is_continuation = token.startswith('##')
         else:
             # placeholders Bernice e tokens com @ sempre iniciam nova palavra
             is_word_start   = token.startswith('▁') or token in WORD_START_TOKENS or token.startswith('@')
-            is_continuation = not is_word_start and len(words) > 0
+            is_continuation = not is_word_start
 
-        if is_continuation and words:
-            clean = token[2:] if is_bert_style else token
-            words[-1] += clean
-            weights[-1].append(float(attr))
-        
+        #possivelmente achar um jeito de ir subtraindo string original
+
+        if is_continuation:
+            clean_token = token[2:] if is_bert_style else token
         else:
-            clean = token.replace('▁', '').strip()
-            words.append(clean or token)
-            weights.append([float(attr)])
-
-    avg_weights = np.array([np.mean(w) for w in weights])
-    return words, avg_weights
+            clean_token = token.replace('▁', '').strip()
+            
+        current_word = current_word.removeprefix(clean_token)
+        
+        w_weights.append(attr)
+        
+        if current_word == "":
+            avg_weights[current_word_idx] = np.array(w_weights).mean()
+            current_word_idx += 1 if current_word_idx < len(words)-1 else -1
+            current_word = words[current_word_idx]
+            w_weights = []
+    
+    return avg_weights
 
 
 if __name__ == "__main__":
