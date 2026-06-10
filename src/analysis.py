@@ -55,7 +55,7 @@ def loadAttributions(model_name, words, instance) -> pd.DataFrame:
     tokens = df['token'].tolist()
     attr = df[target_class].values
 
-    avg_attrs, max_attrs = detokenize(tokens, attr, words, model_name)
+    avg_attrs, max_attrs = wordAttributes(tokens, attr, words, model_name)
     
     data = {'max': max_attrs, 'avg': avg_attrs}
 
@@ -65,54 +65,45 @@ def loadAttributions(model_name, words, instance) -> pd.DataFrame:
 # tokens that always start a new word regardless of ▁
 WORD_START_TOKENS = {'@USER', 'HTTPURL', 'URL'}
 
-def detokenize(tokens: list[str], attributions: np.ndarray, words: list[str], model_name: str):
+def wordAttributes(tokens: list[str], attributions: np.ndarray, words: list[str], model_name: str):
     
-    #iterar sobre tokens atribuidos: (1) tirar char especiais e (2) "subtrair" da frase o token
+    #ainda tratar diferentes separações de pontuação
     
-    is_bert_style = 'bertimbau' in model_name.lower()
-
-    max_weights = np.empty(len(words))
-    avg_weights = np.empty(len(words))
+    bert_style = 'bertimbau' in model_name.lower()
     
-    remaining_token_attr = deque(zip(tokens, attributions))
-
+    tok_word_attr = []
     
-    for i, w in enumerate(words):
+    for tok, attr in zip(tokens, attributions):
         
-        w_weights = []
+        is_new_word = not tok.startswith("##") if bert_style else tok.startswith('▁') or tok in WORD_START_TOKENS or tok.startswith('@')
         
-        while w != "":
-            
-            tok, attr = remaining_token_attr.popleft()
-
-            clean_token = tok.removeprefix('##') if is_bert_style else tok.removeprefix('▁').strip()
-            
-            after = removePrefixInsensitive(w, clean_token)
-            
-            if after == w and clean_token != "":
-                
-                print(f"Aviso: Problema de sincronia entre token e palavras: word: {w} - token: {clean_token}")
-                print(f"Pulando palavra da frase {words}\n")
-                
-                remaining_token_attr.appendleft((tok, attr))
-                w_weights.append(float(0))
-                
-                break
-            
-            w = after
-               
-            w_weights.append(float(attr))
+        clean_token = tok.removeprefix('##') if bert_style else tok.removeprefix('▁').strip()
         
-        avg_weights[i] = np.array(w_weights).mean()
-        max_weights[i] = np.array(w_weights).max()
+        if is_new_word: #adiciona nova palavra
+            tok_word_attr.append((clean_token, [attr]))
+        else:
+            curr_word, curr_attr = tok_word_attr[-1]
+            
+            curr_attr.append(float(attr)) #adiciona atribuição a ele
+            curr_word = curr_word + clean_token #concatena token
+            
+            tok_word_attr[-1] = (curr_word, curr_attr)
     
-    return avg_weights, max_weights
-
-def removePrefixInsensitive(s: str, prefix: str) -> str:
-    """removeprefix case-insensitive."""
-    if s.lower().startswith(prefix.lower()):
-        return s[len(prefix):]
-    return s
+    model_word_attr = {'words': [], 'avg': [], 'max': []}
+    
+    for e in tok_word_attr:
+        word, attrs = e
+        attrs = np.array(attrs)
+        
+        model_word_attr['words'].append(word)
+        model_word_attr['avg'] = attrs.mean()
+        model_word_attr['max'] = attrs.max()
+    
+    #fazer mapeamento palavras reais e atributos
+    
+    
+    raise NotImplementedError
+    return 
 
 if __name__ == "__main__":
     
