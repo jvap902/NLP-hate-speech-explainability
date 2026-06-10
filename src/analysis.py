@@ -1,6 +1,8 @@
+import re
 import numpy as np
 import pandas as pd
 from tqdm import tqdm
+from collections import deque
 from . import config
 from . import loadDataset
 from . import dataVisualization
@@ -13,25 +15,31 @@ def compareAttr(model_names: list, instances: pd.DataFrame):
     
     for i in tqdm(indices, desc="Comparing model attributions"):
         
-        inst_dfs = []
         instance = instances.loc[[i]]
         target_class = instance["class"].values[0]
         text = instance["text"].values[0]
         
+        words = re.sub(r'([.,!?])(?! )', r'\1 ', text)
+        
+        words = re.split(r" |\n", text)
+        words = [x for x in words if x != ""]
+        
         df = pd.DataFrame()
-        df["word"] = text.split(' ')
+        df["word"] = words
         
         for name in model_names:
-            df[name] = loadAttributions(name, instance)["attribution"]
+            model_data = loadAttributions(name, words, instance)
+            df[f"{name}_avg"] = model_data["avg"]
+            df[f"{name}_max"] = model_data["max"]
         
-        print(df)
-        
-        dataVisualization.plotModelComparison(inst_dfs, target_class, model_names, save_path=f'analysis/{target_class}-{i}.png', show=False)
-        
-        raise
+        #print("\n")    
+        #print(i, df)
+        #print("\n")
+
+        #dataVisualization.plotModelComparison(df, save_path=f'analysis/{target_class}-{i}.png', show=False)
 
 
-def loadAttributions(model_name, instance) -> pd.DataFrame:
+def loadAttributions(model_name, words, instance) -> pd.DataFrame:
     """
     Carrega e detokeniza as atribuições de um modelo para uma instância.
     Retorna um DataFrame com colunas: model, word, <classes>
@@ -39,7 +47,6 @@ def loadAttributions(model_name, instance) -> pd.DataFrame:
     path = f"{config.ig_dir}/{model_name}.csv"
     
     target_class = instance["class"].values[0]
-    text = instance["text"].values[0]
     text_id = instance.index.values[0]
     
     df = pd.read_csv(path, index_col=0)
@@ -48,9 +55,9 @@ def loadAttributions(model_name, instance) -> pd.DataFrame:
     tokens = df['token'].tolist()
     attr = df[target_class].values
 
-    avg_attrs = detokenize(tokens, attr, text, model_name)
+    avg_attrs, max_attrs = detokenize(tokens, attr, words, model_name)
     
-    data = {'model': model_name, 'word': text, 'attribution': avg_attrs}
+    data = {'max': max_attrs, 'avg': avg_attrs}
 
     return data
 
@@ -58,49 +65,54 @@ def loadAttributions(model_name, instance) -> pd.DataFrame:
 # tokens that always start a new word regardless of ▁
 WORD_START_TOKENS = {'@USER', 'HTTPURL', 'URL'}
 
-def detokenize(tokens: list[str], attributions: np.ndarray, text: str, model_name: str):
+def detokenize(tokens: list[str], attributions: np.ndarray, words: list[str], model_name: str):
     
     #iterar sobre tokens atribuidos: (1) tirar char especiais e (2) "subtrair" da frase o token
     
     is_bert_style = 'bertimbau' in model_name.lower()
 
-    words = text.split(' ')
-
+    max_weights = np.empty(len(words))
     avg_weights = np.empty(len(words))
     
-    current_word_idx = 0
-    current_word = words[current_word_idx]
+    remaining_token_attr = deque(zip(tokens, attributions))
 
-    w_weights = []
     
-    for token, attr in zip(tokens, attributions):
-            
-        if is_bert_style:
-            is_continuation = token.startswith('##')
-        else:
-            # placeholders Bernice e tokens com @ sempre iniciam nova palavra
-            is_word_start   = token.startswith('▁') or token in WORD_START_TOKENS or token.startswith('@')
-            is_continuation = not is_word_start
-
-        #possivelmente achar um jeito de ir subtraindo string original
-
-        if is_continuation:
-            clean_token = token[2:] if is_bert_style else token
-        else:
-            clean_token = token.replace('▁', '').strip()
-            
-        current_word = current_word.removeprefix(clean_token)
+    for i, w in enumerate(words):
         
-        w_weights.append(attr)
+        w_weights = []
         
-        if current_word == "":
-            avg_weights[current_word_idx] = np.array(w_weights).mean()
-            current_word_idx += 1 if current_word_idx < len(words)-1 else -1
-            current_word = words[current_word_idx]
-            w_weights = []
+        while w != "":
+            
+            tok, attr = remaining_token_attr.popleft()
+
+            clean_token = tok.removeprefix('##') if is_bert_style else tok.removeprefix('▁').strip()
+            
+            after = removePrefixInsensitive(w, clean_token)
+            
+            if after == w and clean_token != "":
+                
+                print(f"Aviso: Problema de sincronia entre token e palavras: word: {w} - token: {clean_token}")
+                print(f"Pulando palavra da frase {words}\n")
+                
+                remaining_token_attr.appendleft((tok, attr))
+                w_weights.append(float(0))
+                
+                break
+            
+            w = after
+               
+            w_weights.append(float(attr))
+        
+        avg_weights[i] = np.array(w_weights).mean()
+        max_weights[i] = np.array(w_weights).max()
     
-    return avg_weights
+    return avg_weights, max_weights
 
+def removePrefixInsensitive(s: str, prefix: str) -> str:
+    """removeprefix case-insensitive."""
+    if s.lower().startswith(prefix.lower()):
+        return s[len(prefix):]
+    return s
 
 if __name__ == "__main__":
     

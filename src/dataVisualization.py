@@ -6,7 +6,7 @@ import matplotlib.pyplot as plt
 from src import config
 
 def plotAttributions(df: pd.DataFrame, save_path=None, show=True):
-    # 1. Converter de Wide (uma coluna por classe) para Long (formato do Seaborn)
+    # Converter de Wide (uma coluna por classe) para Long (formato do Seaborn)
     # Isso coloca todas as atribuições em uma única coluna 'Score' e os nomes das classes em 'Classe'
     df = df.drop(columns=["text_id"])
     df['token_position'] = np.arange(len(df))
@@ -16,10 +16,6 @@ def plotAttributions(df: pd.DataFrame, save_path=None, show=True):
     plt.figure(figsize=(18, 8))
     sns.set_theme(style="whitegrid")
 
-    # 2. Plotar usando Seaborn
-    # x="token" garante que o eixo X não se repita
-    # y="Attribution" é o eixo Y (o valor numérico)
-    # hue="Class" cria uma linha colorida para cada coluna original de classe
     subtle_dashes = ["", (4, 2)] * 6  # repeats to cover all 13 classes
     
     plot = sns.lineplot(
@@ -83,34 +79,32 @@ def plotLosses(df: pd.DataFrame, save_path=None, show=True):
     
     plt.close()
     
-def plotModelComparison(df: pd.DataFrame, target_class: str, model_names: list, save_path=None, show=True):
-    plt.figure(figsize=(14, 8))
+def plotModelComparison(df: pd.DataFrame, save_path=None, show=True):
+    
+    df['position'] = np.arange(len(df))
+    
+    df_long = df.melt(id_vars=["word", "position"], var_name="Model", value_name="Attribution")    
+    
+    plt.figure(figsize=(18, 8))
     sns.set_theme(style="whitegrid")
-
-    palette     = sns.color_palette("tab10", n_colors=len(model_names))
-    line_styles = ["-", "--"]
-
-    longest = df.groupby('model')['word'].count().idxmax()
-    x_labels = df[df['model'] == longest]['word'].tolist()
-
-    for idx, model_name in enumerate(model_names):
-        subset = df[df['model'] == model_name].reset_index(drop=True)
-        if subset.empty:
-            continue
-
-        x_positions = range(len(subset))
-
-        plt.plot(
-            x_positions,
-            subset['attribution'],
-            label=model_name,
-            color=palette[idx],
-            linestyle=line_styles[idx % len(line_styles)],
-            marker='o',
-            linewidth=1.5,
-        )
         
-    y_min, y_max = df["attribution"].min(), df["attribution"].max()
+    plot = sns.lineplot(
+        data=df_long, 
+        x="position", 
+        y="Attribution", 
+        hue="Model", 
+        style="Model",
+        linewidth=2.0,
+        dashes=True,
+        markers=True,
+        palette="husl"
+    )
+    
+    # 3. Ajustes de escala e estética
+    plt.axhline(0, color='black', linestyle='-', alpha=0.3)
+    plt.xlim(df['position'].min(), df['position'].max())
+    
+    y_min, y_max = df_long["Attribution"].min(), df_long["Attribution"].max()
     
     y_min, y_max = math.floor(y_min / 5) * 5, math.ceil(y_max / 5) * 5 # arredonda valores para multiplo de 5
     
@@ -119,14 +113,15 @@ def plotModelComparison(df: pd.DataFrame, target_class: str, model_names: list, 
     ticks = np.round(ticks, 2)
     plt.yticks(ticks)
 
-    plt.xticks(ticks=range(len(x_labels)), labels=x_labels, rotation=45, ha='right')
-    plt.axhline(0, color='black', linestyle='-', alpha=0.3)
-    plt.title(f'Attribution Comparison — {target_class}', fontsize=13)
-    plt.ylabel('Attribution (avg over subwords)')
-    plt.xlabel('Words')
-    plt.legend(bbox_to_anchor=(1.02, 1), loc='upper left', title="Model")
+    plt.xticks(ticks=df['position'], labels=df['word'], rotation=45, ha='right')
+    plt.title(f'Comparação de atribuições de modelos', fontsize=14)
+    plt.ylabel('Atribuição (Integrated Gradients)')
+    
+    # Coloca a legenda para fora para não tampar as linhas
+    plt.legend(bbox_to_anchor=(1.02, 1), loc='upper left', title="Labels TuPyE")
+    
     plt.tight_layout()
-
+    
     if save_path: plt.savefig(save_path, dpi=300)
-    if show: plt.show()
+    if show: plt.show() 
     plt.close()
