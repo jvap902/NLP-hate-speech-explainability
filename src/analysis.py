@@ -28,6 +28,7 @@ def compareAttr(model_names: list, instances: pd.DataFrame):
         df["word"] = words
         
         for name in model_names:
+            name = "Bernice"
             model_data = loadAttributions(name, words, instance)
             df[f"{name}_avg"] = model_data["avg"]
             df[f"{name}_max"] = model_data["max"]
@@ -89,6 +90,7 @@ def wordAttributes(tokens: list[str], attributions: np.ndarray, words: list[str]
             
             tok_word_attr[-1] = (curr_word, curr_attr)
     
+    
     model_word_attr = {'words': [], 'avg': [], 'max': []}
     
     for e in tok_word_attr:
@@ -96,11 +98,31 @@ def wordAttributes(tokens: list[str], attributions: np.ndarray, words: list[str]
         attrs = np.array(attrs)
         
         model_word_attr['words'].append(word)
-        model_word_attr['avg'] = attrs.mean()
-        model_word_attr['max'] = attrs.max()
+        model_word_attr['avg'].append(attrs.mean())
+        model_word_attr['max'].append(attrs.max())
+        
+    print(model_word_attr)
+        
+    model_word_attr = pd.DataFrame(model_word_attr)
+    model_word_attr = model_word_attr.set_index('words')
+    print(model_word_attr)
+    raise
     
     #fazer mapeamento palavras reais e atributos
     
+    print(words, "\n")
+    print(model_word_attr['words'])
+    
+    max_attr = np.zeros(len(words))
+    avg_attr = np.zeros(len(words))
+    
+    remaining_w = deque(words)
+    remaining_mw = deque(model_word_attr['words'])
+    
+    while remaining_w:
+        w = remaining_w.popleft()
+        mw = 'a'
+            
     
     raise NotImplementedError
     return 
