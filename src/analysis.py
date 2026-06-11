@@ -1,4 +1,5 @@
 import re
+import string
 import numpy as np
 import pandas as pd
 from tqdm import tqdm
@@ -28,7 +29,7 @@ def compareAttr(model_names: list, instances: pd.DataFrame):
         df["word"] = words
         
         for name in model_names:
-            name = "Bernice"
+            #name = "Bernice"
             model_data = loadAttributions(name, words, instance)
             df[f"{name}_avg"] = model_data["avg"]
             df[f"{name}_max"] = model_data["max"]
@@ -72,60 +73,82 @@ def wordAttributes(tokens: list[str], attributions: np.ndarray, words: list[str]
     
     bert_style = 'bertimbau' in model_name.lower()
     
-    tok_word_attr = []
-    
-    for tok, attr in zip(tokens, attributions):
-        
-        is_new_word = not tok.startswith("##") if bert_style else tok.startswith('▁') or tok in WORD_START_TOKENS or tok.startswith('@')
-        
-        clean_token = tok.removeprefix('##') if bert_style else tok.removeprefix('▁').strip()
-        
-        if is_new_word: #adiciona nova palavra
-            tok_word_attr.append((clean_token, [attr]))
-        else:
-            curr_word, curr_attr = tok_word_attr[-1]
-            
-            curr_attr.append(float(attr)) #adiciona atribuição a ele
-            curr_word = curr_word + clean_token #concatena token
-            
-            tok_word_attr[-1] = (curr_word, curr_attr)
-    
-    
-    model_word_attr = {'words': [], 'avg': [], 'max': []}
-    
-    for e in tok_word_attr:
-        word, attrs = e
-        attrs = np.array(attrs)
-        
-        model_word_attr['words'].append(word)
-        model_word_attr['avg'].append(attrs.mean())
-        model_word_attr['max'].append(attrs.max())
-        
-    print(model_word_attr)
-        
-    model_word_attr = pd.DataFrame(model_word_attr)
-    model_word_attr = model_word_attr.set_index('words')
-    print(model_word_attr)
-    raise
+    model_words = modelWords(tokens, attributions, bert_style)
+    model_words = model_words.to_dict(orient='records')
     
     #fazer mapeamento palavras reais e atributos
     
-    print(words, "\n")
-    print(model_word_attr['words'])
+    remaining_words = deque(words)
+    remaining_model_words = deque(model_words)
     
-    max_attr = np.zeros(len(words))
-    avg_attr = np.zeros(len(words))
+    attrs_rows = [{'word': w, 'avg': 0, 'max': 0} for w in words] # preenche com zero caso haja mais palavras que modelo excluiu
     
-    remaining_w = deque(words)
-    remaining_mw = deque(model_word_attr['words'])
-    
-    while remaining_w:
-        w = remaining_w.popleft()
-        mw = 'a'
+    while remaining_words:
+        w = remaining_words.popleft()
+        current_word = ""
+        current_attr = []
+        
+        while remaining_model_words:
+            
+            row = remaining_model_words[0]
+        
+            current_word = current_word + row['word']
+            current_attr = current_attr + row['attributions']
+        
+            if w.startswith(current_word):
+                
+                _ = remaining_model_words.popleft()
+                
+                if w == current_word:
+                    attrs_rows.append({'word': w, 'avg': np.mean(current_attr), 'max': np.max(current_attr)})
+            
+            else:
+                break #pula palavra, já tem zeros onde precisa
+                
+    print(pd.DataFrame(attrs_rows))
+                
             
     
     raise NotImplementedError
     return 
+
+
+def modelWords(tokens, attributions, bert_style):
+
+    rows_list = []
+    ant = ""
+    
+    curr_word = ""
+    word_attrs = []
+    
+    for tok, attr in zip(tokens, attributions):
+        
+        if bert_style:
+            is_new_word = not tok.startswith("##") and not ant != '@' and tok not in list(string.punctuation.remove('@'))
+        else:
+            is_new_word = tok.startswith('▁') or tok in WORD_START_TOKENS or tok.startswith('@')
+        
+        clean_token = tok.removeprefix('##') if bert_style else tok.removeprefix('▁').strip()
+        
+        if is_new_word: #adiciona nova palavra
+            
+            if curr_word != "": #necessário por conta da primeira iteração
+                rows_list.append({"word": curr_word, "attributions": word_attrs}) #adiciona palavra finalizada
+            
+            curr_word = clean_token #começa nova palavra
+            word_attrs = [float(attr)]
+        
+        else:
+            curr_word = curr_word + clean_token #concatena token limpo
+            word_attrs.append(float(attr)) #adiciona atribuição a ele
+        
+        ant = tok
+        
+    df = pd.DataFrame(rows_list)
+    #print(df)
+    raise
+    
+    return df
 
 if __name__ == "__main__":
     
