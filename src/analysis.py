@@ -40,7 +40,9 @@ def compareAttr(model_names: list, instances: pd.DataFrame):
             model_data = loadAttributions(name, words, instance)
             df[f"{name}_avg"] = model_data["avg"]
             df[f"{name}_max"] = model_data["max"]
-
+            
+        print("\n", i, df)
+        
         dataVisualization.plotModelComparison(df, save_path=f'analysis/{target_class}-{i}.png', show=False)
 
 
@@ -70,7 +72,16 @@ def wordAttributes(tokens: list[str], attributions: np.ndarray, words: list[str]
     
     #ainda tratar diferentes separações de pontuação
     
-    words = [(i, w.lower()) for i, w in enumerate(words)] # adiciona um id por palavra por conta de possíveis repetições
+    pos_word = []
+    for i, w in enumerate(words): #faz lista com posição por conta da repetição de palavras
+        
+        if 'º' in w: #modelos não conseguem tratar isso, traduz para eles
+            if model_name.lower() == 'bernice': w = w.replace('º', 'o')
+            elif model_name.lower() == 'albertina': w = w.replace('º', '') #bertimbau exclui a coisa
+            
+        pos_word.append((i, w.lower()))
+    
+    words = pos_word
     
     model_words = modelWords(tokens, attributions, model_name)
     
@@ -82,10 +93,16 @@ def wordAttributes(tokens: list[str], attributions: np.ndarray, words: list[str]
     attrs_rows = [{'id': i, 'word': w, 'avg': 0.0, 'max': 0.0} for i, w in words] # preenche com zero caso haja mais palavras que modelo excluiu
     attrs_df = pd.DataFrame(attrs_rows).set_index('id')
     
+    untreated_names = ['@editorahumanas', '@maathbz']
+    
     while remaining_words:
         i, w = remaining_words.popleft()
         current_word = ""
         current_attr = []
+        
+        if model_name.lower() == 'bernice' and any(name in w for name in untreated_names): # bernice é a única que faz todo @usuario virar @USER e como existem 2 nomes não tratados, faz-se uma adaptação
+            w = w.replace('@editorahumanas', '@user')
+            w = w.replace('@maathbz', '@user')
         
         while remaining_model_words:
             
@@ -106,7 +123,7 @@ def wordAttributes(tokens: list[str], attributions: np.ndarray, words: list[str]
             
             else:
                 break # modelo pulou esta palavra, mantém zeros
-    
+
     return attrs_df
 
 # tokens that always start a new word regardless of ▁
