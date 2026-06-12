@@ -20,25 +20,28 @@ def compareAttr(model_names: list, instances: pd.DataFrame):
         target_class = instance["class"].values[0]
         text = instance["text"].values[0]
         
-        words = re.sub(r'([.,!?])(?! )', r'\1 ', text)
-        
-        words = re.split(r" |\n", text)
-        words = [x for x in words if x != ""]
+        # 1. Remove qualquer espaço que tente separar pontuações vizinhas (ex: "? !" vira "?!")
+        text = re.sub(r'([.,!?])\s+(?=[.,!?])', r'\1', text)
+
+        # 2. Cola todo o bloco de pontuações na palavra anterior e bota um espaço depois Ex: "amigo    ?!?!?!" -> "amigo?!?!?!" -> "amigo?!?!?! "
+        text = re.sub(r'\s*([.,!?]+)(?!\s|$)', r'\1 ', text)
+        text = re.sub(r'\s+([.,!?]+)', r'\1', text)
+
+        # 3. Limpeza final de espaçamentos
+        text = re.sub(r'\s+', ' ', text).strip()
+
+        # 4. Cria a lista de tokens
+        words = text.split()
         
         df = pd.DataFrame()
         df["word"] = words
         
         for name in model_names:
-            #name = "Bernice"
             model_data = loadAttributions(name, words, instance)
             df[f"{name}_avg"] = model_data["avg"]
             df[f"{name}_max"] = model_data["max"]
-        
-        #print("\n")    
-        #print(i, df)
-        #print("\n")
 
-        #dataVisualization.plotModelComparison(df, save_path=f'analysis/{target_class}-{i}.png', show=False)
+        dataVisualization.plotModelComparison(df, save_path=f'analysis/{target_class}-{i}.png', show=False)
 
 
 def loadAttributions(model_name, words, instance) -> pd.DataFrame:
@@ -57,83 +60,90 @@ def loadAttributions(model_name, words, instance) -> pd.DataFrame:
     tokens = df['token'].tolist()
     attr = df[target_class].values
 
-    avg_attrs, max_attrs = wordAttributes(tokens, attr, words, model_name)
+    words_df = wordAttributes(tokens, attr, words, model_name)
     
-    data = {'max': max_attrs, 'avg': avg_attrs}
+    data = {'max': words_df['max'].to_list(), 'avg': words_df['avg'].to_list()}
 
     return data
-
-
-# tokens that always start a new word regardless of ▁
-WORD_START_TOKENS = {'@USER', 'HTTPURL', 'URL'}
 
 def wordAttributes(tokens: list[str], attributions: np.ndarray, words: list[str], model_name: str):
     
     #ainda tratar diferentes separações de pontuação
     
-    bert_style = 'bertimbau' in model_name.lower()
+    words = [(i, w.lower()) for i, w in enumerate(words)] # adiciona um id por palavra por conta de possíveis repetições
     
-    model_words = modelWords(tokens, attributions, bert_style)
-    model_words = model_words.to_dict(orient='records')
+    model_words = modelWords(tokens, attributions, model_name)
     
-    #fazer mapeamento palavras reais e atributos
+    # mapeamento palavras reais e atributos
     
     remaining_words = deque(words)
     remaining_model_words = deque(model_words)
     
-    attrs_rows = [{'word': w, 'avg': 0, 'max': 0} for w in words] # preenche com zero caso haja mais palavras que modelo excluiu
+    attrs_rows = [{'id': i, 'word': w, 'avg': 0.0, 'max': 0.0} for i, w in words] # preenche com zero caso haja mais palavras que modelo excluiu
+    attrs_df = pd.DataFrame(attrs_rows).set_index('id')
     
     while remaining_words:
-        w = remaining_words.popleft()
+        i, w = remaining_words.popleft()
         current_word = ""
         current_attr = []
         
         while remaining_model_words:
             
             row = remaining_model_words[0]
+            candidate = current_word + row['word']
         
-            current_word = current_word + row['word']
-            current_attr = current_attr + row['attributions']
-        
-            if w.startswith(current_word):
+            if w.startswith(candidate):
                 
-                _ = remaining_model_words.popleft()
+                current_word = current_word + row['word']
+                current_attr = current_attr + row['attributions']
+                
+                _ = remaining_model_words.popleft() # consome após confirmar match
                 
                 if w == current_word:
-                    attrs_rows.append({'word': w, 'avg': np.mean(current_attr), 'max': np.max(current_attr)})
+                    attrs_df.loc[i, 'avg'] = np.mean(current_attr)
+                    attrs_df.loc[i, 'max'] = np.max(current_attr)
+                    break # se palavra está completa passa para a próxima
             
             else:
-                break #pula palavra, já tem zeros onde precisa
-                
-    print(pd.DataFrame(attrs_rows))
-                
-            
+                break # modelo pulou esta palavra, mantém zeros
     
-    raise NotImplementedError
-    return 
+    return attrs_df
 
+# tokens that always start a new word regardless of ▁
+WORD_START_TOKENS = {'@', '@USER', 'HTTPURL', 'URL'}
+def modelWords(tokens, attributions, model_name):
 
-def modelWords(tokens, attributions, bert_style):
-
+    style = 'bertimbau' if 'bertimbau' in model_name.lower() else model_name.lower()
+    
     rows_list = []
-    ant = ""
     
+    ant = "-$+!a!b&^" # apenas algo que não começaria uma frase para não estar em nenhum grupo
     curr_word = ""
     word_attrs = []
     
     for tok, attr in zip(tokens, attributions):
         
-        if bert_style:
-            is_new_word = not tok.startswith("##") and not ant != '@' and tok not in list(string.punctuation.remove('@'))
-        else:
-            is_new_word = tok.startswith('▁') or tok in WORD_START_TOKENS or tok.startswith('@')
+        puncts = ".,?!"
+        tok_is_punct = tok in puncts
+        ant_is_punct = ant in puncts
+        new_word_by_punct = ant_is_punct and not tok_is_punct # pontuação deve ser nova palavra se o token anterior não é pontuação
         
-        clean_token = tok.removeprefix('##') if bert_style else tok.removeprefix('▁').strip()
+        if style == 'bertimbau':
+            is_new_word = (not tok.startswith("##") and ant != '@') or new_word_by_punct
+            clean_token = tok.removeprefix("##")
+        
+        elif style == 'bernice':
+            is_new_word = (tok.startswith('▁') or tok in WORD_START_TOKENS) or new_word_by_punct
+            clean_token = tok.removeprefix('▁').strip()
+        
+        else:
+            is_new_word = (tok.startswith('▁') or tok in WORD_START_TOKENS) or new_word_by_punct
+            clean_token = tok.removeprefix('▁').strip()
         
         if is_new_word: #adiciona nova palavra
             
             if curr_word != "": #necessário por conta da primeira iteração
-                rows_list.append({"word": curr_word, "attributions": word_attrs}) #adiciona palavra finalizada
+                rows_list.append({"word": curr_word.lower(), "attributions": word_attrs}) #adiciona palavra finalizada
             
             curr_word = clean_token #começa nova palavra
             word_attrs = [float(attr)]
@@ -142,13 +152,12 @@ def modelWords(tokens, attributions, bert_style):
             curr_word = curr_word + clean_token #concatena token limpo
             word_attrs.append(float(attr)) #adiciona atribuição a ele
         
-        ant = tok
-        
-    df = pd.DataFrame(rows_list)
-    #print(df)
-    raise
+        ant = clean_token
     
-    return df
+    # adiciona último token que não foi adicionado por não ter nada depois
+    rows_list.append({"word": curr_word.lower(), "attributions": word_attrs})
+    
+    return rows_list
 
 if __name__ == "__main__":
     
