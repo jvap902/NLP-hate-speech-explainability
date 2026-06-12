@@ -142,7 +142,7 @@ def modelWords(tokens, attributions, model_name):
         
         puncts = ".,?!"
         tok_is_punct = tok in puncts
-        ant_is_punct = ant in puncts
+        ant_is_punct = ant[-1] in puncts if ant else False #se termina com pontuação
         new_word_by_punct = ant_is_punct and not tok_is_punct # pontuação deve ser nova palavra se o token anterior não é pontuação
         
         if style == 'bertimbau':
