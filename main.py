@@ -62,6 +62,6 @@ if __name__ == "__main__":
     model_attr = pd.read_csv(f'{config.ig_dir}/{modelc.name}.csv')
     instances = pd.read_csv(f'{config.ig_dir}/instances.csv')
     
-    interpret.compare(modelc, model_attr, instances)
+    #interpret.compare(modelc, model_attr, instances)
     
     del modelc
