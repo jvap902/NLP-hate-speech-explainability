@@ -101,11 +101,13 @@ def classifyInputs(modelc, loader): #preliminar
             else:
                 texts = modelc.tokenizer.batch_decode(input_ids, skip_special_tokens=True)
             all_texts.extend(texts)
+            
     
     df = pd.DataFrame({
         'text': all_texts,
         'preds': all_preds,
         'labels': all_labels
     })
+    print(df)
     
     return df
