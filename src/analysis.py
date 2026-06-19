@@ -14,6 +14,8 @@ def compareAttr(model_names: list, instances: pd.DataFrame):
     
     indices = instances.index.to_list()
     
+    dfs = {}
+    
     for i in tqdm(indices, desc="Comparing model attributions"):
         
         instance = instances.loc[[i]]
@@ -43,7 +45,11 @@ def compareAttr(model_names: list, instances: pd.DataFrame):
             
         print("\n", i, df)
         
-        dataVisualization.plotModelComparison(df, save_path=f'analysis/{target_class}-{i}.png', show=False)
+        #dataVisualization.plotModelComparison(df, save_path=f'analysis/{target_class}-{i}.png', show=False)
+        
+        dfs[i] = df
+    
+    return dfs
 
 
 def loadAttributions(model_name, words, instance) -> pd.DataFrame:
@@ -176,6 +182,29 @@ def modelWords(tokens, attributions, model_name):
     
     return rows_list
 
+def instanceScores(df : pd.DataFrame, relevant_words):
+    columns_to_drop = [col for col in df.columns.to_list() if col.endswith('avg')]
+    
+    max_df = df.drop(columns=columns_to_drop) # dataframe das atribuições máximas por palavra
+    
+    resul = dict(zip(max_df.select_dtypes(include=['float']).columns.to_list(), [0]*len(max_df.columns)))
+    
+    avg = df.select_dtypes(include=['float']).mean()
+    
+    for index, row in max_df.iterrows():
+        for col_name in max_df.select_dtypes(include=['float']):
+            if row['word'] in relevant_words:
+                if row[col_name] > avg[col_name]:
+                    resul[col_name] += 1
+            else:
+                if row[col_name] <= avg[col_name]:
+                    resul[col_name] += 1
+    
+    for key, hits in resul.items():
+        resul[key] = hits/len(max_df)
+        
+    return resul
+
 if __name__ == "__main__":
     
     model_names = config.models.keys()
@@ -191,4 +220,18 @@ if __name__ == "__main__":
     instances_dataset = instances_dataset[['text']].copy()
     instances_dataset['class'] = instances['class']
     
-    compareAttr(model_names, instances_dataset)
+    dfs = compareAttr(model_names, instances_dataset)
+    
+    hits_rows = []
+    
+    for key, inst_df in dfs.items():
+        hits = instanceScores(inst_df, instances.loc[key]['relevant_words'])
+        
+        new_row = {'id': key} | hits
+        
+        hits_rows.append(new_row)
+        
+    df = pd.DataFrame(hits_rows)
+    df.to_csv('analysis/scores.csv', header=True)
+    
+    print(df.select_dtypes(include=['float']).agg(['mean', 'std']))
