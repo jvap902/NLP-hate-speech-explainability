@@ -1,6 +1,8 @@
 import argparse
+import numpy as np
 import pandas as pd
 from pathlib import Path
+from sklearn.metrics import f1_score
 from torch.utils.data import DataLoader
 from src import *
 
@@ -30,6 +32,11 @@ def attribute(modelc, ig_dataset):
     ig_predictions.to_csv(f'{config.ig_dir}/predictions.csv', mode='a', header=False, index=False)
 
     print(ig_predictions)
+    
+    y_true = np.array(ig_predictions['labels'].tolist())
+    y_pred = np.array(ig_predictions['preds'].tolist())
+
+    print(f1_score(y_true, y_pred, average='micro'))
     
     interpret.explainPrediction(modelc, ig_tokenized, indices, show_graph=False)
     
