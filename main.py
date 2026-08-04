@@ -13,12 +13,14 @@ parser.add_argument("-nig", "--new_ig", required=False, action='store_true', def
 
 args = parser.parse_args()
 
-def tune(modelc):
+def tune(modelc, train_dataset, folds=None):
     if "tupy" not in modelc.link.lower():
-        modelc = classify.fineTune(modelc, repeat=3)
+        modelc, results = classify.fineTune(modelc, repeat=3, train_dataset=train_dataset, folds=folds)
     
         eval_data = classify.testModel(modelc)
         print(eval_data)
+        return results.get("folds")
+    return folds
 
 def attribute(modelc, ig_dataset):
     ig_tokenized = modelc.tokenize(ig_dataset).with_format(type="torch", columns=["input_ids", "attention_mask", "labels"])
@@ -58,9 +60,17 @@ if __name__ == "__main__":
     
     train, test = loadDataset.loadTuPyE(-1, -1)
 
+    # Generate folds once from the raw dataset for consistency across all models
+    folds = classify.get_fold_indices(train, n_splits=5, random_state=42)
+
     modelc = loadModelc()
     
-    if not args.no_fine_tune: tune(modelc)
+    if not args.no_fine_tune: 
+        folds = tune(modelc, train_dataset=train, folds=folds)
+        
+        # Run traditional baselines with the same folds
+        classify.crossValidate("SVM", train, model_type="svm", folds=folds)
+        classify.crossValidate("Baseline", train, model_type="baseline", folds=folds)
 
     ig_dataset, indices = loadDataset.igDataset(test)
 
