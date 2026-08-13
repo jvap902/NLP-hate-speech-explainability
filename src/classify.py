@@ -132,6 +132,7 @@ def _get_stratification_labels(dataset) -> np.ndarray:
 def get_fold_indices(dataset, n_splits=5, random_state=42) -> list:
     """
     Generate consistent StratifiedKFold indices from a HuggingFace dataset.
+    Uses label-combination hashing for stratification.
     
     Returns a list of (train_indices, val_indices) tuples.
     Can be reused across different model types to ensure identical folds.
@@ -143,6 +144,62 @@ def get_fold_indices(dataset, n_splits=5, random_state=42) -> list:
     indices = np.arange(len(dataset))
     folds = list(skf.split(indices, strat_labels))
 
+    return folds
+
+
+def get_fold_indices_iterative(dataset, n_splits=5, random_state=42) -> list:
+    """
+    Generate consistent fold indices using Iterative Stratification for multilabel data.
+    
+    Unlike the label-combination approach, this considers each label independently
+    and ensures that each fold has approximately the same proportion of positive
+    samples for every label. It handles rare labels better by prioritizing them
+    during the assignment process.
+    
+    Uses skmultilearn.model_selection.IterativeStratification.
+    
+    Parameters
+    ----------
+    dataset : HuggingFace Dataset
+        Must contain columns from config.dataset_classes.
+    n_splits : int
+        Number of folds.
+    random_state : int
+        Random seed for reproducibility.
+
+    Returns a list of (train_indices, val_indices) tuples.
+    Can be reused across different model types to ensure identical folds.
+    """
+    from skmultilearn.model_selection import IterativeStratification
+    
+    # Build label matrix from dataset columns
+    label_matrix = np.array(
+        [[int(dataset[col][i]) for col in config.dataset_classes] for i in range(len(dataset))]
+    )
+    
+    # IterativeStratification does not have a random_state param, but the order
+    # of input determines the output. We shuffle indices with a fixed seed first,
+    # then map back to original indices after splitting.
+    rng = np.random.default_rng(random_state)
+    n_samples = len(dataset)
+    shuffled_order = rng.permutation(n_samples)
+    label_matrix_shuffled = label_matrix[shuffled_order]
+    
+    stratifier = IterativeStratification(
+        n_splits=n_splits,
+        order=2  # considers label pairs for better distribution
+    )
+    
+    folds = []
+    for train_idx_local, val_idx_local in stratifier.split(
+        X=np.zeros((n_samples, 1)),  # X is unused by the stratifier, just needs shape
+        y=label_matrix_shuffled
+    ):
+        # Map back from shuffled indices to original dataset indices
+        train_indices = shuffled_order[train_idx_local]
+        val_indices = shuffled_order[val_idx_local]
+        folds.append((train_indices, val_indices))
+    
     return folds
 
 
@@ -169,8 +226,28 @@ def _extract_texts_and_labels(dataset) -> tuple:
 # Model-specific train/predict
 # ---------------------------------------------------------------------------
 
-def _train_predict_bert(modelc: Model, train_indices, val_indices, epochs_fold=5):
-    """Train a BERT model on train split and predict on val split."""
+def _train_predict_bert(modelc: Model, train_indices, val_indices, labels_val, epochs_fold=5):
+    """Train a BERT model on train split and predict on val split.
+    
+    Resets the model to pretrained weights before training to prevent
+    data leakage between folds.
+    
+    Parameters
+    ----------
+    modelc : Model
+        The BERT model instance.
+    train_indices : np.ndarray
+        Indices for training split.
+    val_indices : np.ndarray
+        Indices for validation split.
+    labels_val : np.ndarray
+        Ground truth labels for validation (from shared _extract_texts_and_labels).
+    epochs_fold : int
+        Number of training epochs.
+    """
+    # Reset to pretrained weights — prevents leakage from previous folds
+    modelc.reset()
+    
     train_split = modelc.train_tokenized.select(train_indices.tolist())
     val_split = modelc.train_tokenized.select(val_indices.tolist())
 
@@ -182,7 +259,7 @@ def _train_predict_bert(modelc: Model, train_indices, val_indices, epochs_fold=5
     logits = torch.Tensor(predictions.predictions)
     probs = torch.sigmoid(logits).cpu().numpy()
     y_pred = (probs >= 0.5).astype(int)
-    y_true = predictions.label_ids.astype(int)
+    y_true = labels_val
 
     return y_true, y_pred
 
@@ -272,9 +349,8 @@ def crossValidate(
     if folds is None:
         folds = get_fold_indices(train_dataset, n_splits=n_splits, random_state=random_state)
 
-    # Extract raw texts and labels for traditional models
-    if model_type in ("svm", "baseline"):
-        all_texts, all_labels = _extract_texts_and_labels(train_dataset)
+    # Extract raw texts and labels once — used by all model types for consistency
+    all_texts, all_labels = _extract_texts_and_labels(train_dataset)
 
     # Setup CSV output
     csv_path = f"{config.losses_dir}/{model_name}_cv.csv"
@@ -295,8 +371,9 @@ def crossValidate(
         val_indices = np.array(val_indices)
 
         if model_type == "bert":
+            labels_val = all_labels[val_indices]
             y_true, y_pred = _train_predict_bert(
-                model_or_name, train_indices, val_indices, epochs_fold
+                model_or_name, train_indices, val_indices, labels_val, epochs_fold
             )
         elif model_type == "svm":
             texts_train = [all_texts[i] for i in train_indices]
@@ -327,10 +404,6 @@ def crossValidate(
         ])
 
         print(f"  Accuracy: {o['accuracy']:.4f} | F1-micro: {o['f1_micro']:.4f} | F1-macro: {o['f1_macro']:.4f}")
-
-    # Save model for BERT after all folds
-    if model_type == "bert":
-        model_or_name.saveModel(1)
 
     # Aggregate metrics across folds
     avg_metrics = _average_fold_metrics(fold_metrics_list)
