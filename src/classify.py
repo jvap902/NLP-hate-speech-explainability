@@ -1,6 +1,8 @@
 import torch
 import numpy as np
+import pandas as pd
 from tqdm import tqdm
+from rich.console import Console
 from sklearn.metrics import (
     f1_score, accuracy_score, precision_score, recall_score,
     classification_report
@@ -10,8 +12,7 @@ from sklearn.svm import LinearSVC
 from sklearn.multiclass import OneVsRestClassifier
 from sklearn.feature_extraction.text import TfidfVectorizer
 from sklearn.dummy import DummyClassifier
-import pandas as pd
-from . import config
+from . import config, logging
 from .model.modelClass import Model
 from .fileHandler import getJsonInfo, updateJson, writeCsvLine, createFile
 
@@ -504,7 +505,7 @@ def _update_info_json(model_name: str, avg_metrics: dict):
 
 
 # ---------------------------------------------------------------------------
-# Legacy-compatible wrapper (keeps the old interface working)
+# Fine tuning function
 # ---------------------------------------------------------------------------
 
 def fineTune(modelc: Model, train_dataset=None, epochs=15, checkpoint_interval=5):
@@ -526,22 +527,24 @@ def fineTune(modelc: Model, train_dataset=None, epochs=15, checkpoint_interval=5
     Model
         The fine-tuned Model instance.
     """
+    console = Console()
+    
     modelc.reset()
 
     modelc.trainer.train_dataset = modelc.train_tokenized
 
-    print(f"\n{'='*60}")
-    print(f"Fine-tuning {modelc.name} for {epochs} epochs on full training set")
-    print(f"{'='*60}\n")
+    console.print(f"[bold red]Fine tuning {modelc.name}[/bold red]", justify="center")
 
     checkpoint_interval = checkpoint_interval
     
-    model_info = fileHandler.getJsonInfo(config.fine_tune_info_path, [modelc.name])[0]
+    model_data = getJsonInfo(config.fine_tune_info_path, [modelc.name])[0]
     
     if "trained_epochs" in model_data:
         trained_epochs = model_data["trained_epochs"]
     else:
         trained_epochs = 0
+
+    console.print(f"[red]Starting from epoch {trained_epochs}[/red]")
 
     for start in range(trained_epochs, epochs, checkpoint_interval):
         chunk = min(checkpoint_interval, epochs - trained_epochs)
@@ -550,13 +553,13 @@ def fineTune(modelc: Model, train_dataset=None, epochs=15, checkpoint_interval=5
         trained_epochs += chunk
 
         modelc.saveModel(trained_epochs=trained_epochs)
-        print(f"  Checkpoint saved at epoch {completed}/{epochs}")
+        console.print(f"[red]Checkpoint saved at epoch {trained_epochs}/{epochs}[/red]")
 
     return modelc
 
 
 # ---------------------------------------------------------------------------
-# Testing / evaluation (unchanged)
+# Testing / evaluation
 # ---------------------------------------------------------------------------
 
 def testModel(modelc: Model):

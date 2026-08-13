@@ -86,15 +86,16 @@
             }
         },
         "eval": {
-            "eval_loss": 0.06850285828113556,
-            "eval_accuracy": 0.8350125944584383,
-            "eval_f1-macro": 0.3866011107018222,
-            "eval_f1-micro": 0.8830164698405973,
-            "eval_runtime": 10.9791,
-            "eval_samples_per_second": 795.514,
-            "eval_steps_per_second": 24.866,
+            "eval_loss": 0.08830050379037857,
+            "eval_accuracy": 0.836272040302267,
+            "eval_f1-macro": 0.45471921655077296,
+            "eval_f1-micro": 0.886179287246847,
+            "eval_runtime": 7.708,
+            "eval_samples_per_second": 1133.112,
+            "eval_steps_per_second": 35.418,
             "epoch": 5.0
-        }
+        },
+        "trained_epochs": 30
     },
     "SVM": {
         "cv_results": {

@@ -9,20 +9,10 @@ from src import *
 parser = argparse.ArgumentParser()
 parser.add_argument("-m", "--model", type=str, required=False, default="BERTimbau-base", help="Specify a model name present in config.models")
 parser.add_argument("-nf", "--no_fine_tune", required=False, action='store_true', default=False, help="Disable fine-tuning process")
+parser.add_argument("-ncv", "--no_cross_validation", required=False, action='store_true', default=False, help="Disable K-Fold Cross Validation process")
 parser.add_argument("-nig", "--new_ig", required=False, action='store_true', default=False, help="Force new Integrated Gradients attribution")
 
 args = parser.parse_args()
-
-def tune(modelc, train_dataset, folds=None):
-    if "tupy" not in modelc.link.lower():
-        results = classify.crossValidate(model_or_name=modelc, train_dataset=dataset_for_strat, model_type="bert", n_splits=5, epochs_fold=5, random_state=42, folds=folds)
-        
-        modelc = classify.fineTune(modelc, train_dataset=train_dataset, folds=folds)
-    
-        eval_data = classify.testModel(modelc)
-        print(eval_data)
-        return results.get("folds")
-    return folds
 
 def attribute(modelc, ig_dataset):
     ig_tokenized = modelc.tokenize(ig_dataset).with_format(type="torch", columns=["input_ids", "attention_mask", "labels"])
@@ -83,7 +73,13 @@ if __name__ == "__main__":
     modelc = loadModelc()
     
     if not args.no_fine_tune: 
-        folds = tune(modelc, train_dataset=train, folds=folds)
+        modelc = classify.fineTune(modelc, train_dataset=train)
+    
+        eval_data = classify.testModel(modelc)
+        print(eval_data)
+        
+    if not args.no_cross_validation: 
+        cv_results = classify.crossValidate(model_or_name=modelc, train_dataset=train_dataset, model_type="bert", n_splits=5, epochs_fold=5, random_state=42, folds=folds)
         
         # Run traditional baselines with the same folds
         classify.crossValidate("SVM", train, model_type="svm", folds=folds)
