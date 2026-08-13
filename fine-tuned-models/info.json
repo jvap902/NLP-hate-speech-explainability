@@ -1,52 +1,273 @@
 {
-    "BERTimbau-base": {
-        "eval": {
-            "eval_loss": 0.04347609728574753,
-            "eval_model_preparation_time": 0.0023,
-            "eval_accuracy": 0.8994733226471262,
-            "eval_f1-macro": 0.635273911641239,
-            "eval_f1-micro": 0.9340605929686234,
-            "eval_runtime": 8.2785,
-            "eval_samples_per_second": 1055.025,
-            "eval_steps_per_second": 32.977
-        }
-    },
-    "BERTimbau-large": {
-        "eval": {
-            "eval_loss": 0.04162640497088432,
-            "eval_model_preparation_time": 0.0025,
-            "eval_accuracy": 0.9145866727730707,
-            "eval_f1-macro": 0.8527947851742205,
-            "eval_f1-micro": 0.9483679525222551,
-            "eval_runtime": 20.6933,
-            "eval_samples_per_second": 422.069,
-            "eval_steps_per_second": 13.193
-        }
-    },
-    "Albertina": {
-        "repeats": 3,
-        "eval": {
-            "eval_loss": 0.10341983288526535,
-            "eval_model_preparation_time": 0.0035,
-            "eval_accuracy": 0.8310052667735287,
-            "eval_f1-macro": 0.43942972987356677,
-            "eval_f1-micro": 0.8829424418909702,
-            "eval_runtime": 98.0253,
-            "eval_samples_per_second": 89.099,
-            "eval_steps_per_second": 22.28
-        }
-    },
     "Bernice": {
-        "repeats": 3,
+        "cv_results": {
+            "overall": {
+                "accuracy": 0.8283907732453601,
+                "f1_micro": 0.8779406788590463,
+                "f1_macro": 0.3720607135063204,
+                "precision_micro": 0.886957810088199,
+                "precision_macro": 0.4526010864573727,
+                "recall_micro": 0.8691158835811773,
+                "recall_macro": 0.3402610888241778
+            },
+            "per_class": {
+                "ageism": {
+                    "f1": 0.0,
+                    "precision": 0.0,
+                    "recall": 0.0,
+                    "support": 9.0
+                },
+                "aporophobia": {
+                    "f1": 0.0,
+                    "precision": 0.0,
+                    "recall": 0.0,
+                    "support": 10.4
+                },
+                "body_shame": {
+                    "f1": 0.5692033339794532,
+                    "precision": 0.7780606060606061,
+                    "recall": 0.45035324705277996,
+                    "support": 44.4
+                },
+                "capacitism": {
+                    "f1": 0.0,
+                    "precision": 0.0,
+                    "recall": 0.0,
+                    "support": 17.6
+                },
+                "lgbtphobia": {
+                    "f1": 0.7034370696581561,
+                    "precision": 0.7772560703385879,
+                    "recall": 0.6450172099227944,
+                    "support": 131.2
+                },
+                "political": {
+                    "f1": 0.5505566586721297,
+                    "precision": 0.5865288479107059,
+                    "recall": 0.5196259677676227,
+                    "support": 184.0
+                },
+                "racism": {
+                    "f1": 0.04048979591836734,
+                    "precision": 0.22000000000000003,
+                    "recall": 0.02233201581027668,
+                    "support": 46.8
+                },
+                "religious_intolerance": {
+                    "f1": 0.14632478632478632,
+                    "precision": 0.4126984126984127,
+                    "recall": 0.09948400412796697,
+                    "support": 18.2
+                },
+                "misogyny": {
+                    "f1": 0.6188802188808097,
+                    "precision": 0.6675919469589349,
+                    "recall": 0.5776442715844708,
+                    "support": 268.0
+                },
+                "xenophobia": {
+                    "f1": 0.29695477763091016,
+                    "precision": 0.4557069143446852,
+                    "recall": 0.22380789022298453,
+                    "support": 53.8
+                },
+                "other": {
+                    "f1": 0.5918065787168545,
+                    "precision": 0.5912026790080782,
+                    "recall": 0.592828812109525,
+                    "support": 719.6
+                },
+                "not_hate": {
+                    "f1": 0.9470753422943778,
+                    "precision": 0.9421675601684605,
+                    "recall": 0.9520396472917128,
+                    "support": 6146.4
+                }
+            }
+        },
         "eval": {
-            "eval_loss": 0.12387088686227798,
-            "eval_model_preparation_time": 0.002,
-            "eval_accuracy": 0.8345546141515915,
-            "eval_f1-macro": 0.49418781937952305,
-            "eval_f1-micro": 0.8834426659669378,
-            "eval_runtime": 7.793,
-            "eval_samples_per_second": 1120.753,
-            "eval_steps_per_second": 35.032
+            "eval_loss": 0.06850285828113556,
+            "eval_accuracy": 0.8350125944584383,
+            "eval_f1-macro": 0.3866011107018222,
+            "eval_f1-micro": 0.8830164698405973,
+            "eval_runtime": 10.9791,
+            "eval_samples_per_second": 795.514,
+            "eval_steps_per_second": 24.866,
+            "epoch": 5.0
+        }
+    },
+    "SVM": {
+        "cv_results": {
+            "overall": {
+                "accuracy": 0.8178564821478815,
+                "f1_micro": 0.862330877939705,
+                "f1_macro": 0.2896161447647427,
+                "precision_micro": 0.8879987432222272,
+                "precision_macro": 0.5133116549066103,
+                "recall_micro": 0.8381056413041696,
+                "recall_macro": 0.23125106288625652
+            },
+            "per_class": {
+                "ageism": {
+                    "f1": 0.0,
+                    "precision": 0.0,
+                    "recall": 0.0,
+                    "support": 9.0
+                },
+                "aporophobia": {
+                    "f1": 0.0,
+                    "precision": 0.0,
+                    "recall": 0.0,
+                    "support": 10.4
+                },
+                "body_shame": {
+                    "f1": 0.4570917649980462,
+                    "precision": 0.8400000000000001,
+                    "recall": 0.31987388152411506,
+                    "support": 44.4
+                },
+                "capacitism": {
+                    "f1": 0.04327485380116959,
+                    "precision": 0.26666666666666666,
+                    "recall": 0.024444444444444442,
+                    "support": 17.6
+                },
+                "lgbtphobia": {
+                    "f1": 0.5756633273425301,
+                    "precision": 0.8224633920993544,
+                    "recall": 0.44532468584109763,
+                    "support": 131.2
+                },
+                "political": {
+                    "f1": 0.26902171513099393,
+                    "precision": 0.6619897953939786,
+                    "recall": 0.17081259086869185,
+                    "support": 184.0
+                },
+                "racism": {
+                    "f1": 0.06239189008936909,
+                    "precision": 0.37,
+                    "recall": 0.03464547874485762,
+                    "support": 46.8
+                },
+                "religious_intolerance": {
+                    "f1": 0.1371640866873065,
+                    "precision": 0.55,
+                    "recall": 0.07876750700280113,
+                    "support": 18.2
+                },
+                "misogyny": {
+                    "f1": 0.5174791628780577,
+                    "precision": 0.7643724537708876,
+                    "recall": 0.39182592084717144,
+                    "support": 268.0
+                },
+                "xenophobia": {
+                    "f1": 0.10178418253559787,
+                    "precision": 0.4076190476190476,
+                    "recall": 0.059142367066895365,
+                    "support": 53.8
+                },
+                "other": {
+                    "f1": 0.36903347077088783,
+                    "precision": 0.5652937561354764,
+                    "recall": 0.2743153854403508,
+                    "support": 719.6
+                },
+                "not_hate": {
+                    "f1": 0.9424892829429536,
+                    "precision": 0.9113347471939133,
+                    "recall": 0.9758604928546528,
+                    "support": 6146.4
+                }
+            }
+        }
+    },
+    "Baseline": {
+        "cv_results": {
+            "overall": {
+                "accuracy": 0.8213488335521152,
+                "f1_micro": 0.8398891708004521,
+                "f1_macro": 0.07800069816640355,
+                "precision_micro": 0.8797160781724156,
+                "precision_macro": 0.07330967318103462,
+                "recall_micro": 0.80351340503686,
+                "recall_macro": 0.08333333333333333
+            },
+            "per_class": {
+                "ageism": {
+                    "f1": 0.0,
+                    "precision": 0.0,
+                    "recall": 0.0,
+                    "support": 9.0
+                },
+                "aporophobia": {
+                    "f1": 0.0,
+                    "precision": 0.0,
+                    "recall": 0.0,
+                    "support": 10.4
+                },
+                "body_shame": {
+                    "f1": 0.0,
+                    "precision": 0.0,
+                    "recall": 0.0,
+                    "support": 44.4
+                },
+                "capacitism": {
+                    "f1": 0.0,
+                    "precision": 0.0,
+                    "recall": 0.0,
+                    "support": 17.6
+                },
+                "lgbtphobia": {
+                    "f1": 0.0,
+                    "precision": 0.0,
+                    "recall": 0.0,
+                    "support": 131.2
+                },
+                "political": {
+                    "f1": 0.0,
+                    "precision": 0.0,
+                    "recall": 0.0,
+                    "support": 184.0
+                },
+                "racism": {
+                    "f1": 0.0,
+                    "precision": 0.0,
+                    "recall": 0.0,
+                    "support": 46.8
+                },
+                "religious_intolerance": {
+                    "f1": 0.0,
+                    "precision": 0.0,
+                    "recall": 0.0,
+                    "support": 18.2
+                },
+                "misogyny": {
+                    "f1": 0.0,
+                    "precision": 0.0,
+                    "recall": 0.0,
+                    "support": 268.0
+                },
+                "xenophobia": {
+                    "f1": 0.0,
+                    "precision": 0.0,
+                    "recall": 0.0,
+                    "support": 53.8
+                },
+                "other": {
+                    "f1": 0.0,
+                    "precision": 0.0,
+                    "recall": 0.0,
+                    "support": 719.6
+                },
+                "not_hate": {
+                    "f1": 0.9360083779968427,
+                    "precision": 0.8797160781724156,
+                    "recall": 1.0,
+                    "support": 6146.4
+                }
+            }
         }
     }
 }

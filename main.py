@@ -15,7 +15,9 @@ args = parser.parse_args()
 
 def tune(modelc, train_dataset, folds=None):
     if "tupy" not in modelc.link.lower():
-        modelc, results = classify.fineTune(modelc, repeat=3, train_dataset=train_dataset, folds=folds)
+        results = classify.crossValidate(model_or_name=modelc, train_dataset=dataset_for_strat, model_type="bert", n_splits=5, epochs_fold=5, random_state=42, folds=folds)
+        
+        modelc = classify.fineTune(modelc, train_dataset=train_dataset, folds=folds)
     
         eval_data = classify.testModel(modelc)
         print(eval_data)
@@ -58,11 +60,26 @@ if __name__ == "__main__":
     
     print(f"device set to {config.device}")
     
+    # Load dataset
     train, test = loadDataset.loadTuPyE(-1, -1)
 
-    # Generate folds once from the raw dataset for consistency across all models
-    folds = classify.get_fold_indices(train, n_splits=5, random_state=42)
 
+    # Generate folds once from the raw dataset for consistency across all models
+    
+    n_splits=5
+    
+    folds_panel = LivePanel("Gathering Folds", "Purple")
+    folds_panel.start()
+    if Path('folds.npz').is_file():
+        folds_panel.addMessage("## Loading previously generated folds")
+        loaded = np.load('folds.npz')
+        folds = [(loaded[f'train_{i}'], loaded[f'val_{i}']) for i in range(n_splits)]
+    else:
+        folds_panel.addMessage("## Generating new folds, this might take a while")
+        folds = classify.get_fold_indices(train, n_splits=n_splits, random_state=42)
+    folds_panel.stop()
+    
+    # Load model
     modelc = loadModelc()
     
     if not args.no_fine_tune: 

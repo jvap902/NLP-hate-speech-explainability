@@ -137,12 +137,24 @@ def get_fold_indices(dataset, n_splits=5, random_state=42) -> list:
     Returns a list of (train_indices, val_indices) tuples.
     Can be reused across different model types to ensure identical folds.
     """
+        
     strat_labels = _get_stratification_labels(dataset)
     
     skf = StratifiedKFold(n_splits=n_splits, shuffle=True, random_state=random_state)
     
     indices = np.arange(len(dataset))
     folds = list(skf.split(indices, strat_labels))
+    
+    # 1. Unpack fold arrays into a dictionary with distinct keys
+    save_dict = {}
+    for i, (train_idx, val_idx) in enumerate(folds):
+        save_dict[f'train_{i}'] = train_idx
+        save_dict[f'val_{i}'] = val_idx
+    
+    # 2. Save dictionary arrays into the .npz archive
+    np.savez('folds.npz', **save_dict)
+    
+    print(folds)
 
     return folds
 
@@ -210,7 +222,7 @@ def get_fold_indices_iterative(dataset, n_splits=5, random_state=42) -> list:
 def _extract_texts_and_labels(dataset) -> tuple:
     """Extract raw texts and multi-label matrix from a HuggingFace Dataset."""
     texts = dataset["text"]
-    
+        
     # Build label matrix including not_hate
     label_matrix = []
     for i in range(len(dataset)):
@@ -495,35 +507,52 @@ def _update_info_json(model_name: str, avg_metrics: dict):
 # Legacy-compatible wrapper (keeps the old interface working)
 # ---------------------------------------------------------------------------
 
-def fineTune(modelc: Model, repeat: int, train_dataset=None, folds=None):
+def fineTune(modelc: Model, train_dataset=None, epochs=15, checkpoint_interval=5):
     """
-    Legacy wrapper: runs cross-validation using StratifiedKFold.
-    Kept for backward compatibility with main.py's tune() function.
-    
+    Fine-tune a BERT model on the full training dataset.
+    Saves a checkpoint every 5 epochs.
+
     Parameters
     ----------
     modelc : Model
-        The BERT model instance (with train_tokenized and trainer set up).
-    repeat : int
-        Not used anymore (kept for API compat). Folds replace repeats.
+        The Model instance with tokenized data and trainer already configured.
     train_dataset : HuggingFace Dataset, optional
-        The raw dataset (with class columns) for stratification.
-        If None, uses modelc.train_tokenized (works only if class columns exist).
-    folds : list, optional
-        Pre-computed fold indices for consistency across models.
+        The raw training dataset (kept for interface consistency).
+    epochs : int
+        Number of training epochs. Default is 15.
+
+    Returns
+    -------
+    Model
+        The fine-tuned Model instance.
     """
-    dataset_for_strat = train_dataset if train_dataset is not None else modelc.train_tokenized
+    modelc.reset()
+
+    modelc.trainer.train_dataset = modelc.train_tokenized
+
+    print(f"\n{'='*60}")
+    print(f"Fine-tuning {modelc.name} for {epochs} epochs on full training set")
+    print(f"{'='*60}\n")
+
+    checkpoint_interval = checkpoint_interval
     
-    results = crossValidate(
-        model_or_name=modelc,
-        train_dataset=dataset_for_strat,
-        model_type="bert",
-        n_splits=5,
-        epochs_fold=5,
-        random_state=42,
-        folds=folds,
-    )
-    return modelc, results
+    model_info = fileHandler.getJsonInfo(config.fine_tune_info_path, [modelc.name])[0]
+    
+    if "trained_epochs" in model_data:
+        trained_epochs = model_data["trained_epochs"]
+    else:
+        trained_epochs = 0
+
+    for start in range(trained_epochs, epochs, checkpoint_interval):
+        chunk = min(checkpoint_interval, epochs - trained_epochs)
+        modelc.trainer.args.num_train_epochs = chunk
+        modelc.trainer.train()
+        trained_epochs += chunk
+
+        modelc.saveModel(trained_epochs=trained_epochs)
+        print(f"  Checkpoint saved at epoch {completed}/{epochs}")
+
+    return modelc
 
 
 # ---------------------------------------------------------------------------
