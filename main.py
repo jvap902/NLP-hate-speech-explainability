@@ -72,19 +72,20 @@ if __name__ == "__main__":
     # Load model
     modelc = loadModelc()
     
-    if not args.no_fine_tune: 
-        modelc = classify.fineTune(modelc, train_dataset=train)
-    
-        eval_data = classify.testModel(modelc)
-        print(eval_data)
-        
     if not args.no_cross_validation: 
-        cv_results = classify.crossValidate(model_or_name=modelc, train_dataset=train_dataset, model_type="bert", n_splits=5, epochs_fold=5, random_state=42, folds=folds)
+        cv_results = classify.crossValidate(model_or_name=modelc, train_dataset=train, model_type="bert", n_splits=5, epochs_fold=5, random_state=42, folds=folds)
+        modelc.reset()
         
         # Run traditional baselines with the same folds
         classify.crossValidate("SVM", train, model_type="svm", folds=folds)
         classify.crossValidate("Baseline", train, model_type="baseline", folds=folds)
 
+    if not args.no_fine_tune:
+        modelc = classify.fineTune(modelc, train_dataset=train)
+    
+        eval_data = classify.testModel(modelc)
+        print(eval_data)
+        
     ig_dataset, indices = loadDataset.igDataset(test)
 
     if args.new_ig or not Path(f"{config.ig_dir}/{modelc.name}.csv"): attribute(modelc, ig_dataset)

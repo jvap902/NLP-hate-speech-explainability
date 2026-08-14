@@ -528,8 +528,6 @@ def fineTune(modelc: Model, train_dataset=None, epochs=15, checkpoint_interval=5
         The fine-tuned Model instance.
     """
     console = Console()
-    
-    modelc.reset()
 
     modelc.trainer.train_dataset = modelc.train_tokenized
 

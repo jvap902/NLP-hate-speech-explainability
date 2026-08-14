@@ -142,6 +142,11 @@ class Model():
         self.newModel()
         self.model.to(config.device)
         
+        # Updates info about training
+        train_data = fileHandler.getJsonInfo(config.fine_tune_info_path, [modelc.name])[0]
+        model_data["trained_epochs"] = 0
+        fileHandler.updateJson(json_path=config.fine_tune_info_path, fields=[self.name], values=[model_data])
+        
         self.panel.addMessage("### Model reset complete")
         self.panel.stop()
         

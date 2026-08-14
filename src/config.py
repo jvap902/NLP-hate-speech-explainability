@@ -9,8 +9,8 @@ dataset_classes = ['ageism', 'aporophobia', 'body_shame', 'capacitism', 'lgbtpho
 model_classes = ["ageism", "aporophobia", "body_shame", "capacitism", "lgbtphobia", "political", "racism", "religious_intolerance", "misogyny", "xenophobia", "other", "not_hate"]
 
 models = {
-    "BERTimbau-base": "Silly-Machine/TuPy-Bert-Base-Multilabel",
-    "BERTimbau-large": "Silly-Machine/TuPy-Bert-Large-Multilabel",
+    "BERTimbau-base": "Silly-Machine/TuPy-Bert-Base-Multilabel", #talvez substituir pelo que não passou por um fine-tuning neuralmind/bert-base-portuguese-cased
+    "BERTimbau-large": "Silly-Machine/TuPy-Bert-Large-Multilabel", #talvez substituir pelo que não passou por um fine-tuning neuralmind/bert-large-portuguese-cased
     "Albertina": "PORTULAN/albertina-900m-portuguese-ptbr-encoder-brwac",
     "Bernice": "jhu-clsp/bernice"
     #"Gemma": "google/gemma-4-E4B-it", talvez em um trabalho futuro
