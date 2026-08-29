@@ -143,7 +143,7 @@ class Model():
         self.model.to(config.device)
         
         # Updates info about training
-        train_data = fileHandler.getJsonInfo(config.fine_tune_info_path, [modelc.name])[0]
+        model_data = fileHandler.getJsonInfo(config.fine_tune_info_path, [self.name])[0]
         model_data["trained_epochs"] = 0
         fileHandler.updateJson(json_path=config.fine_tune_info_path, fields=[self.name], values=[model_data])
         

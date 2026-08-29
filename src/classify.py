@@ -548,7 +548,7 @@ def fineTune(modelc: Model, train_dataset=None, epochs=15, checkpoint_interval=5
         chunk = min(checkpoint_interval, epochs - trained_epochs)
         modelc.trainer.args.num_train_epochs = chunk
         modelc.trainer.train()
-        trained_epochs += chunk
+        trained_epochs += modelc.trainer.state.epoch
 
         modelc.saveModel(trained_epochs=trained_epochs)
         console.print(f"[red]Checkpoint saved at epoch {trained_epochs}/{epochs}[/red]")
