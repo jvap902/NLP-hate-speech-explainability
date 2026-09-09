@@ -63,13 +63,13 @@ class Model():
             problem_type="multi_label_classification"
         )
         
-    def saveModel(self, repeats=0):
+    def saveModel(self, trained_epochs=0):
         model_data = fileHandler.getJsonInfo(config.fine_tune_info_path, [self.name])[0]
         
-        if "repeats" in model_data:
-            model_data["repeats"] += repeats
+        if "trained_epochs" in model_data:
+            model_data["trained_epochs"] += trained_epochs
         else:
-            model_data["repeats"] = repeats
+            model_data["trained_epochs"] = trained_epochs
         
         fileHandler.updateJson(json_path=config.fine_tune_info_path, fields=[self.name], values=[model_data])
         self.model.save_pretrained(self.save_dir)
@@ -111,13 +111,44 @@ class Model():
         return ds
     
     def getTrainer(self, epochs_fold, compute_metrics):
-        training_args = getTrainingArgs(self, epochs_fold)
+        self._epochs_fold = epochs_fold
+        self._compute_metrics = compute_metrics
+        self._createTrainer()
+    
+    def _createTrainer(self):
+        """Create (or recreate) the Trainer with the current model."""
+        training_args = getTrainingArgs(self, self._epochs_fold)
         
         self.trainer = Trainer(
             model=self.model,
             args=training_args,
             train_dataset=self.train_tokenized,
             eval_dataset=self.test_tokenized,
-            compute_metrics=compute_metrics,
+            compute_metrics=self._compute_metrics,
             data_collator=self.data_collator
         )
+    
+    def reset(self):
+        """
+        Reset model to pretrained weights (from original checkpoint, not fine-tuned).
+        Recreates the Trainer with fresh optimizer/scheduler state.
+        This prevents data leakage between cross-validation folds.
+        """
+        # Start panel briefly for newModel's messages
+        self.panel = LivePanel(f"Resetting {self.name}", color="yellow")
+        self.panel.start()
+        
+        # Reload model from original pretrained checkpoint (self.link)
+        self.newModel()
+        self.model.to(config.device)
+        
+        # Updates info about training
+        model_data = fileHandler.getJsonInfo(config.fine_tune_info_path, [self.name])[0]
+        model_data["trained_epochs"] = 0
+        fileHandler.updateJson(json_path=config.fine_tune_info_path, fields=[self.name], values=[model_data])
+        
+        self.panel.addMessage("### Model reset complete")
+        self.panel.stop()
+        
+        # Recreate trainer with fresh model
+        self._createTrainer()

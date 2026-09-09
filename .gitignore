@@ -1,5 +1,8 @@
+.vscode
+.venv
 /token.txt
 __pycache__/
 /data
 /fine-tuned-models/*/
 *.zip
+*.rar

@@ -79,8 +79,8 @@ def loadTuPyE(train_size=-1, test_size=-1): #-1 quer dizer carregar inteiro
             
         
         #depois de carregados, coloca em formato do pytorch
-        train = train.with_format("torch", columns=config.dataset_classes)
-        test = test.with_format("torch", columns=config.dataset_classes)
+        #train = train.with_format("torch", columns=config.dataset_classes)
+        #test = test.with_format("torch", columns=config.dataset_classes)
         
         dataset_panel.addMessage(f"\n### Datasets loaded")
         
