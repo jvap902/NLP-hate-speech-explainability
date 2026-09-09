@@ -95,7 +95,7 @@
             "eval_steps_per_second": 35.418,
             "epoch": 5.0
         },
-        "trained_epochs": 30
+        "trained_epochs": 15
     },
     "SVM": {
         "cv_results": {
@@ -285,7 +285,7 @@
         }
     },
     "BERTimbau-base": {
-        "trained_epochs": 30.0,
+        "trained_epochs": 15.0,
         "cv_results": {
             "overall": {
                 "accuracy": 0.826787665170657,
@@ -383,7 +383,7 @@
         }
     },
     "BERTimbau-large": {
-        "trained_epochs": 30.0,
+        "trained_epochs": 15.0,
         "cv_results": {
             "overall": {
                 "accuracy": 0.8322265623479472,

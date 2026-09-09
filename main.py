@@ -15,7 +15,7 @@ parser.add_argument("-nig", "--new_ig", required=False, action='store_true', def
 
 args = parser.parse_args()
 
-def attribute(modelc, ig_dataset):
+def attribute(modelc, ig_dataset, indices):
     ig_tokenized = modelc.tokenize(ig_dataset).with_format(type="torch", columns=["input_ids", "attention_mask", "labels"])
     
     ig_loader = DataLoader(ig_tokenized, batch_size=32, shuffle=False, num_workers=4, collate_fn=modelc.data_collator)
@@ -53,7 +53,6 @@ if __name__ == "__main__":
     
     # Load dataset
     train, test = loadDataset.loadTuPyE(-1, -1)
-
 
     # Generate folds once from the raw dataset for consistency across all models
     n_splits=5
@@ -95,7 +94,7 @@ if __name__ == "__main__":
         
     ig_dataset, indices = loadDataset.igDataset(test)
 
-    if args.new_ig or not Path(f"{config.ig_dir}/{modelc.name}.csv"): attribute(modelc, ig_dataset)
+    if args.new_ig or not Path(f"{config.ig_dir}/{modelc.name}.csv"): attribute(modelc, ig_dataset, indices)
     
     model_attr = pd.read_csv(f'{config.ig_dir}/{modelc.name}.csv')
     instances = pd.read_csv(f'{config.ig_dir}/instances.csv')

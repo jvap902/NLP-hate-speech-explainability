@@ -66,10 +66,7 @@ class Model():
     def saveModel(self, trained_epochs=0):
         model_data = fileHandler.getJsonInfo(config.fine_tune_info_path, [self.name])[0]
         
-        if "trained_epochs" in model_data:
-            model_data["trained_epochs"] += trained_epochs
-        else:
-            model_data["trained_epochs"] = trained_epochs
+        model_data["trained_epochs"] = trained_epochs
         
         fileHandler.updateJson(json_path=config.fine_tune_info_path, fields=[self.name], values=[model_data])
         self.model.save_pretrained(self.save_dir)
