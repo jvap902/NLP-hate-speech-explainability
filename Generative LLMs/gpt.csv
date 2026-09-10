@@ -1,0 +1,976 @@
+id,class,relevant_words
+2,xenophobia,[]
+6,misogyny,"[""puta🤣🤣🤣🤣🤣🤣🤣""]"
+34,lgbtphobia,[]
+34,political,"[""janjão""]"
+34,misogyny,[]
+45,political,"[""fascista""]"
+45,racism,"[""japonês"", ""asiático.""]"
+45,xenophobia,"[""japonês""]"
+49,misogyny,"[""filha"", ""puta""]"
+52,misogyny,"[""vagabunda""]"
+56,political,[]
+58,political,[]
+59,political,[]
+63,political,[]
+76,political,"[""bolsonaro""]"
+86,political,"[""senador"", ""esquerdalhas""]"
+93,political,"[""governo"", ""lula"", ""bolsonaro""]"
+109,body_shame,"[""patinho"", ""feio"", ""coitada""]"
+111,misogyny,"[""mulher""]"
+112,political,"[""presidente""]"
+113,political,"[""gadaiada."", ""governo.""]"
+117,political,"[""direita"", ""esquerdistas""]"
+120,misogyny,[]
+143,lgbtphobia,"[""traveco,""]"
+143,misogyny,[]
+155,political,"[""congresso"", ""corruptos"", ""PT""]"
+171,misogyny,"[""puta""]"
+173,misogyny,"[""namorada""]"
+175,misogyny,"[""gorda,""]"
+199,lgbtphobia,"[""travesti?""]"
+218,body_shame,"[""feia"", ""gorda"", ""corpo"", ""rosto.""]"
+218,misogyny,"[""gorda""]"
+223,lgbtphobia,"[""viado"", ""sapatão""]"
+223,misogyny,"[""sapatão""]"
+231,political,[]
+231,misogyny,"[""blogueirinha.""]"
+248,misogyny,[]
+258,lgbtphobia,"[""#orgulhohetero""]"
+262,lgbtphobia,"[""\""casamento""]"
+271,misogyny,"[""filha"", ""puta""]"
+296,political,"[""bolsonaro,""]"
+325,misogyny,"[""mulher"", ""burra,""]"
+338,xenophobia,"[""islã"", ""\""refugiados\"""", ""ocidente.""]"
+344,political,"[""bolsonaro"", ""lula"", ""presidente""]"
+345,ageism,"[""geração"", ""jovens""]"
+357,political,"[""lula""]"
+378,xenophobia,"[""sulista""]"
+379,political,"[""desgoverno"", ""lula""]"
+380,misogyny,"[""vagabunda,""]"
+391,racism,"[""preto,"", ""negro,""]"
+398,misogyny,[]
+454,political,"[""fascista,""]"
+473,misogyny,"[""namorada,""]"
+487,political,"[""Pt,""]"
+501,body_shame,[]
+501,misogyny,[]
+503,xenophobia,"[""china!""]"
+510,body_shame,"[""cabeça"", ""ovo""]"
+535,lgbtphobia,[]
+551,ageism,"[""esclerosado....""]"
+551,capacitism,"[""esclerosado....""]"
+567,aporophobia,"[""liso"", ""miserável""]"
+583,lgbtphobia,"[""viado""]"
+599,political,"[""boquinha"", ""socialista""]"
+619,lgbtphobia,"[""sapatao.""]"
+619,misogyny,"[""sapatao.""]"
+687,misogyny,"[""mulher""]"
+718,lgbtphobia,[]
+726,lgbtphobia,"[""bixa""]"
+726,political,"[""bolsonaro""]"
+734,misogyny,"[""corna""]"
+736,misogyny,"[""Porca""]"
+741,lgbtphobia,"[""biologicamente"", ""XX"", ""XY""]"
+741,misogyny,[]
+751,political,"[""ESQUERDA""]"
+762,political,"[""esquerda"", ""governo.""]"
+771,misogyny,[]
+775,misogyny,"[""menina""]"
+788,political,"[""esquerdopatas"", ""governo.""]"
+794,lgbtphobia,"[""sapatão"", ""heteros""]"
+800,racism,"[""chineses""]"
+800,xenophobia,"[""chineses""]"
+801,lgbtphobia,"[""Fufas""]"
+801,misogyny,"[""Fufas"", ""mulheres""]"
+802,ageism,"[""GERAÇÃO"", ""NETOS""]"
+805,misogyny,[]
+811,misogyny,"[""mulher""]"
+820,capacitism,"[""doentes""]"
+820,political,[]
+836,misogyny,"[""mulher.""]"
+848,lgbtphobia,[]
+857,political,"[""esquerda""]"
+884,misogyny,"[""Mulherzinha"", ""safada""]"
+892,body_shame,"[""feia"", ""\""gorda\"""", ""\""rodada\""""]"
+892,misogyny,"[""\""gorda\""""]"
+899,misogyny,"[""burra""]"
+913,body_shame,"[""gorda"", ""feia""]"
+913,misogyny,"[""gorda""]"
+927,misogyny,"[""mulher"", ""burra""]"
+968,political,"[""esquerda""]"
+983,lgbtphobia,"[""sapatão""]"
+983,misogyny,"[""sapatão""]"
+992,political,"[""esquerdistas""]"
+1003,political,"[""Lula""]"
+1015,lgbtphobia,"[""sapatão""]"
+1023,racism,"[""branco""]"
+1025,racism,[]
+1031,xenophobia,[]
+1049,political,[]
+1071,lgbtphobia,"[""homofobia"", ""gay,""]"
+1074,misogyny,"[""mina""]"
+1081,misogyny,"[""burra"", ""mulher""]"
+1082,political,"[""Lula"", ""URSS."", ""Bolsonaro!""]"
+1095,lgbtphobia,"[""Fufas""]"
+1095,misogyny,"[""Fufas"", ""mulheres""]"
+1097,lgbtphobia,"[""sapatão!""]"
+1097,misogyny,"[""sapatão!""]"
+1108,lgbtphobia,"[""viado,""]"
+1140,body_shame,"[""FEIA"", ""GORDA""]"
+1140,misogyny,"[""GORDA""]"
+1151,political,"[""bolsonaro"", ""lula""]"
+1159,racism,"[""BRANCO"", ""NEGRO""]"
+1163,political,"[""Luladrão""]"
+1180,political,[]
+1183,aporophobia,"[""pobre""]"
+1186,misogyny,"[""mulher"", ""burra""]"
+1191,political,"[""esquerda""]"
+1199,misogyny,[]
+1215,political,"[""ESQUERDA""]"
+1222,lgbtphobia,"[""sapatão,""]"
+1222,misogyny,"[""sapatão,""]"
+1223,religious_intolerance,"[""terrorismo"", ""radical"", ""islâmico""]"
+1223,xenophobia,"[""islâmico"", ""Oriente""]"
+1235,lgbtphobia,"[""gay""]"
+1243,body_shame,"[""gorda"", ""feia,"", ""oferecida,"", ""gata...""]"
+1243,misogyny,"[""gorda"", ""oferecida,""]"
+1257,political,[]
+1264,misogyny,[]
+1280,religious_intolerance,"[""muçulmanos"", ""inferno""]"
+1280,xenophobia,[]
+1290,political,[]
+1301,political,[]
+1301,misogyny,"[""mulheres,""]"
+1311,lgbtphobia,"[""viado.""]"
+1334,misogyny,[]
+1352,lgbtphobia,"[""sapatão""]"
+1352,misogyny,"[""sapatão""]"
+1358,political,[]
+1366,body_shame,"[""feia,"", ""gorda,"", ""coitada.""]"
+1366,misogyny,"[""mulher."", ""gorda,""]"
+1369,political,"[""bolsonaro"", ""governo""]"
+1372,racism,"[""branco"", ""negro:""]"
+1385,political,[]
+1385,misogyny,"[""feministas"", ""abortar!""]"
+1393,political,[]
+1401,misogyny,[]
+1428,political,[]
+1455,lgbtphobia,"[""trans""]"
+1455,misogyny,"[""mulher"", ""burra""]"
+1456,lgbtphobia,"[""sapatão""]"
+1456,misogyny,"[""sapatão""]"
+1464,xenophobia,[]
+1465,political,"[""esquerdopatas""]"
+1477,lgbtphobia,"[""trans""]"
+1477,political,"[""bolsonaro""]"
+1511,racism,"[""negros""]"
+1512,lgbtphobia,"[""sapatão"", ""viado""]"
+1512,misogyny,"[""sapatão""]"
+1588,lgbtphobia,"[""fufas""]"
+1588,misogyny,"[""fufas""]"
+1627,lgbtphobia,"[""sapatão\""""]"
+1627,misogyny,"[""mulheres"", ""sapatão\""""]"
+1629,misogyny,"[""mulher,""]"
+1644,political,"[""Esquerdopatas"", ""esquerda""]"
+1658,political,"[""bolsonaro""]"
+1659,lgbtphobia,[]
+1666,xenophobia,"[""sulista""]"
+1684,misogyny,"[""piranha???""]"
+1701,political,[]
+1712,misogyny,"[""cadelinha""]"
+1714,misogyny,"[""mulher"", ""burra""]"
+1721,political,"[""esquerda""]"
+1772,body_shame,[]
+1772,misogyny,"[""mina""]"
+1782,political,"[""LULADRÃO""]"
+1792,lgbtphobia,"[""gays""]"
+1803,lgbtphobia,"[""viado???????????????????????""]"
+1825,lgbtphobia,"[""viadinho"", ""homofóbico???""]"
+1839,political,"[""política"", ""eleição""]"
+1843,misogyny,[]
+1859,political,"[""comunista!""]"
+1879,xenophobia,"[""nordestino""]"
+1881,racism,"[""nego""]"
+1896,political,"[""bolsonaro""]"
+1903,political,[]
+1907,misogyny,[]
+1909,xenophobia,"[""paulista""]"
+1960,racism,"[""branco"", ""racismo""]"
+1968,misogyny,[]
+1973,misogyny,"[""filha"", ""puta""]"
+1979,political,"[""feministo""]"
+1979,misogyny,[]
+1985,body_shame,"[""pequeno?""]"
+1987,xenophobia,"[""países"", ""refugiados."", ""país.""]"
+2002,xenophobia,"[""sulista""]"
+2005,misogyny,"[""putinha""]"
+2033,political,[]
+2065,xenophobia,[]
+2084,body_shame,"[""gorda"", ""feia"", ""peso""]"
+2084,misogyny,"[""gorda""]"
+2099,lgbtphobia,[]
+2099,religious_intolerance,"[""\""Islão""]"
+2099,xenophobia,"[""\""Islão""]"
+2111,political,"[""esquerda""]"
+2122,misogyny,"[""mulher"", ""burra""]"
+2124,misogyny,"[""mulher""]"
+2132,political,"[""comunista""]"
+2134,religious_intolerance,"[""demônio"", ""evangélico😬😬😬""]"
+2147,political,[]
+2167,political,[]
+2175,misogyny,"[""cadela"", ""vagabunda""]"
+2177,misogyny,[]
+2188,misogyny,[]
+2198,lgbtphobia,"[""sapatão""]"
+2198,misogyny,"[""sapatão""]"
+2211,lgbtphobia,"[""homofobia""]"
+2211,misogyny,[]
+2223,political,"[""genocida,"", ""lula"", ""bolsonaro,""]"
+2226,body_shame,"[""gorda,"", ""feia...""]"
+2226,racism,"[""preto,""]"
+2226,misogyny,"[""filha"", ""gorda,""]"
+2244,xenophobia,"[""terrorista"", ""refugiado""]"
+2266,aporophobia,"[""pobres""]"
+2266,political,"[""direita"", ""política""]"
+2270,misogyny,"[""mulher!""]"
+2322,body_shame,"[""gorda"", ""feia""]"
+2322,misogyny,"[""gorda""]"
+2335,body_shame,"[""feia"", ""gorda""]"
+2335,misogyny,"[""gorda""]"
+2336,lgbtphobia,"[""viado""]"
+2337,lgbtphobia,"[""sapatao""]"
+2337,misogyny,"[""sapatao""]"
+2353,misogyny,"[""safada""]"
+2358,political,"[""Comunista""]"
+2358,misogyny,"[""safada...""]"
+2364,racism,"[""nega""]"
+2367,lgbtphobia,"[""sapatão""]"
+2367,misogyny,"[""sapatão""]"
+2372,political,"[""esquerda"", ""governo""]"
+2373,misogyny,[]
+2383,aporophobia,"[""pobre""]"
+2383,political,"[""direita"", ""política""]"
+2386,misogyny,[]
+2386,xenophobia,[]
+2387,political,"[""esquerda,""]"
+2410,body_shame,[]
+2410,misogyny,[]
+2423,political,[]
+2423,misogyny,"[""FEMINISTAS:""]"
+2428,political,"[""eleições"", ""esquerdistas""]"
+2448,political,"[""esquerdista."", ""URSS."", ""comunismo""]"
+2463,misogyny,"[""piranha""]"
+2464,lgbtphobia,[]
+2489,lgbtphobia,[]
+2506,lgbtphobia,[]
+2508,lgbtphobia,"[""boiola""]"
+2511,misogyny,[]
+2520,racism,"[""racismo"", ""branca""]"
+2531,lgbtphobia,"[""sapatao"", ""romance""]"
+2539,political,[]
+2558,xenophobia,"[""refugiados"", ""Islâmico""]"
+2572,misogyny,"[""burra"", ""mulher""]"
+2584,xenophobia,[]
+2587,misogyny,"[""#Vagabunda""]"
+2600,xenophobia,"[""Países"", ""refugiados.""]"
+2601,misogyny,[]
+2608,lgbtphobia,"[""viado""]"
+2636,political,"[""bolsonaro?"", ""presidente"", ""lula""]"
+2643,misogyny,"[""safada""]"
+2648,misogyny,"[""mulher"", ""burra""]"
+2649,lgbtphobia,"[""sapatao,""]"
+2657,body_shame,[]
+2663,political,"[""bolsonaro""]"
+2672,political,"[""PT""]"
+2675,lgbtphobia,"[""homofóbico""]"
+2677,body_shame,"[""gorda"", ""feia""]"
+2677,misogyny,"[""gorda""]"
+2678,political,[]
+2679,political,[]
+2696,political,[]
+2697,political,[]
+2715,body_shame,"[""gorda""]"
+2715,political,[]
+2715,misogyny,"[""gorda"", ""feminista""]"
+2732,lgbtphobia,[]
+2732,misogyny,"[""mulheres!"", ""mulher""]"
+2734,lgbtphobia,"[""viado""]"
+2736,lgbtphobia,"[""Gays""]"
+2738,racism,"[""mexicanos""]"
+2738,xenophobia,"[""mexicanos""]"
+2743,racism,"[""neguinha❤""]"
+2748,misogyny,"[""mulher"", ""sapatão?\""""]"
+2759,misogyny,"[""jaguara"", ""puta"", ""nojent""]"
+2763,lgbtphobia,"[""gay""]"
+2769,lgbtphobia,"[""viado""]"
+2774,lgbtphobia,"[""sapatão.""]"
+2774,misogyny,"[""sapatão.""]"
+2785,misogyny,[]
+2811,body_shame,"[""gorda...""]"
+2811,misogyny,"[""gorda...""]"
+2812,racism,"[""preto"", ""branco""]"
+2822,xenophobia,[]
+2844,racism,[]
+2844,xenophobia,[]
+2857,body_shame,"[""feia,"", ""gorda,""]"
+2857,misogyny,"[""gorda,""]"
+2863,political,"[""esquerda.""]"
+2864,xenophobia,[]
+2886,lgbtphobia,"[""sapatão""]"
+2890,misogyny,"[""putinha""]"
+2899,lgbtphobia,"[""sapatão""]"
+2899,misogyny,"[""sapatão""]"
+2903,xenophobia,[]
+2910,political,"[""esquerda"", ""Bolsonaro""]"
+2913,misogyny,"[""mulher"", ""burra""]"
+2916,body_shame,"[""feia"", ""gorda""]"
+2916,misogyny,"[""gorda""]"
+2961,misogyny,"[""mulher"", ""burra""]"
+2967,body_shame,"[""gordo""]"
+2970,misogyny,"[""puta""]"
+2975,political,"[""pt"", ""corrupção""]"
+2976,xenophobia,[]
+2981,lgbtphobia,"[""sapatao""]"
+2981,misogyny,"[""sapatao""]"
+2985,misogyny,"[""piranha""]"
+2998,political,"[""governo""]"
+3003,political,[]
+3004,lgbtphobia,"[""viado"", ""gay"", ""homofobico""]"
+3055,racism,"[""Negra,""]"
+3085,misogyny,"[""piranha""]"
+3090,misogyny,"[""vagabunda""]"
+3104,lgbtphobia,"[""sapatão""]"
+3119,political,"[""dilma""]"
+3124,political,[]
+3125,xenophobia,[]
+3130,misogyny,"[""puta""]"
+3150,political,"[""Bolsonaro"", ""PT""]"
+3178,body_shame,"[""gorda"", ""feia""]"
+3178,misogyny,"[""gorda""]"
+3183,misogyny,[]
+3192,lgbtphobia,[]
+3194,xenophobia,"[""mineiro""]"
+3206,political,[]
+3238,capacitism,"[""louca""]"
+3271,capacitism,"[""desequilibrado!"", ""internar"", ""anormal!""]"
+3274,political,[]
+3278,political,"[""esquerdistas,""]"
+3285,lgbtphobia,"[""sapatão""]"
+3285,misogyny,"[""sapatão""]"
+3307,xenophobia,"[""sulista""]"
+3313,misogyny,"[""Burra"", ""mulher"", ""amante!""]"
+3314,lgbtphobia,"[""sapatão""]"
+3314,misogyny,"[""sapatão""]"
+3318,religious_intolerance,"[""igreja""]"
+3335,misogyny,"[""mulheres""]"
+3349,capacitism,"[""surdo""]"
+3349,political,"[""pt""]"
+3355,political,[]
+3356,lgbtphobia,"[""fufas,""]"
+3356,misogyny,"[""fufas,""]"
+3370,lgbtphobia,"[""sapatao""]"
+3378,lgbtphobia,"[""viado"", ""sapatão""]"
+3401,political,"[""corrupção"", ""lula."", ""bolsonaro,""]"
+3402,lgbtphobia,"[""FUFAS""]"
+3402,racism,"[""PRETO""]"
+3402,misogyny,"[""FUFAS""]"
+3428,lgbtphobia,"[""viado""]"
+3430,lgbtphobia,"[""fufas""]"
+3430,misogyny,"[""fufas""]"
+3442,misogyny,[]
+3461,misogyny,[]
+3467,religious_intolerance,"[""religião""]"
+3472,body_shame,[]
+3490,political,[]
+3492,xenophobia,"[""refugiados""]"
+3495,racism,"[""branco,""]"
+3504,political,"[""bolsonaro""]"
+3514,body_shame,"[""\""gorda\"","", ""\""feia\"".""]"
+3514,misogyny,"[""\""gorda\"",""]"
+3561,misogyny,[]
+3565,misogyny,[]
+3567,political,"[""esquerda""]"
+3568,capacitism,"[""desenhar"", ""retardado""]"
+3588,lgbtphobia,[]
+3588,political,"[""lula""]"
+3588,xenophobia,[]
+3599,religious_intolerance,"[""muçulmano""]"
+3599,xenophobia,[]
+3605,racism,"[""branco""]"
+3621,political,"[""bolsonaro.""]"
+3624,misogyny,[]
+3643,misogyny,[]
+3657,misogyny,"[""mina"", ""puta""]"
+3659,misogyny,"[""MENINA""]"
+3667,racism,"[""nega""]"
+3679,lgbtphobia,"[""gay""]"
+3680,lgbtphobia,"[""viado""]"
+3692,body_shame,"[""gorda"", ""feia""]"
+3692,misogyny,"[""Mulher"", ""gorda""]"
+3694,misogyny,"[""puta""]"
+3708,racism,[]
+3714,misogyny,"[""vagabunda.😒😂""]"
+3720,political,"[""PT.""]"
+3720,misogyny,[]
+3750,political,"[""esquerdopata!""]"
+3781,misogyny,[]
+3799,lgbtphobia,"[""viado""]"
+3805,misogyny,"[""putinha""]"
+3825,xenophobia,"[""paulistas""]"
+3847,aporophobia,"[""dinheiro"", ""sorvete"", ""carentes""]"
+3847,political,"[""bolsonaro""]"
+3849,religious_intolerance,"[""islamitas""]"
+3849,xenophobia,"[""europeu.""]"
+3853,misogyny,"[""puta""]"
+3860,misogyny,"[""vadias""]"
+3867,political,"[""genocida"", ""comunista""]"
+3870,misogyny,"[""mulher"", ""BURRA""]"
+3896,lgbtphobia,"[""viado""]"
+3911,misogyny,"[""putinha""]"
+3927,misogyny,[]
+3938,xenophobia,"[""carioca""]"
+3940,body_shame,"[""gata,"", ""GORDA"", ""FEIA""]"
+3940,misogyny,"[""GORDA""]"
+3959,political,[]
+3962,political,"[""bolsonaro""]"
+3985,political,"[""PT""]"
+4007,lgbtphobia,[]
+4011,misogyny,[]
+4032,racism,"[""racismo""]"
+4034,political,"[""esquerdopata!""]"
+4035,lgbtphobia,[]
+4052,political,[]
+4053,political,"[""esquerda""]"
+4063,body_shame,"[""feia"", ""gorda""]"
+4063,misogyny,"[""gorda""]"
+4067,body_shame,"[""gorda"", ""feia""]"
+4067,misogyny,"[""gorda""]"
+4085,racism,"[""branca""]"
+4087,misogyny,"[""namorada,"", ""mulher"", ""buceta,""]"
+4089,misogyny,"[""mina""]"
+4097,political,"[""esquerdalha.""]"
+4122,misogyny,[]
+4136,misogyny,"[""porca""]"
+4139,political,[]
+4149,political,"[""presidente,"", ""bolsonaro"", ""lula""]"
+4153,political,"[""corrupto"", ""Lula"", ""PT""]"
+4158,political,"[""comunista""]"
+4165,political,[]
+4166,misogyny,"[""MULHER"", ""BURRA""]"
+4184,misogyny,"[""puta""]"
+4196,misogyny,[]
+4203,body_shame,"[""GORDA"", ""FEIA""]"
+4203,misogyny,"[""GORDA""]"
+4211,xenophobia,"[""refugiados""]"
+4227,aporophobia,"[""chinelao"", ""vagabundo""]"
+4243,political,[]
+4265,political,"[""Fascista""]"
+4266,xenophobia,"[""países,"", ""refugiados.""]"
+4270,lgbtphobia,[]
+4270,misogyny,"[""MULHERES""]"
+4273,body_shame,"[""gordo""]"
+4274,ageism,"[""velho""]"
+4280,xenophobia,"[""país"", ""sulista""]"
+4286,misogyny,"[""burra"", ""mulher""]"
+4294,political,[]
+4298,political,"[""👉LULALADRAO""]"
+4310,capacitism,[]
+4316,body_shame,"[""feia"", ""gorda""]"
+4316,misogyny,"[""gorda""]"
+4343,misogyny,[]
+4364,lgbtphobia,"[""SAPATÃO""]"
+4364,misogyny,"[""SAPATÃO""]"
+4366,political,"[""presidente"", ""lula""]"
+4388,misogyny,"[""puta"", ""mulher"", ""machista"", ""burra""]"
+4391,political,"[""governo"", ""socialista""]"
+4420,lgbtphobia,"[""fufas""]"
+4420,misogyny,"[""fufas""]"
+4427,political,"[""esquerdopatas"", ""presidente""]"
+4429,political,"[""minions"", ""presidente""]"
+4434,misogyny,[]
+4438,lgbtphobia,"[""boiola""]"
+4442,body_shame,"[""gorda"", ""feia""]"
+4442,misogyny,"[""gorda""]"
+4446,misogyny,[]
+4452,lgbtphobia,"[""gay""]"
+4457,racism,[]
+4457,xenophobia,"[""japones""]"
+4461,lgbtphobia,"[""boiola""]"
+4466,body_shame,"[""cabeça""]"
+4470,lgbtphobia,"[""fufas""]"
+4470,misogyny,"[""fufas""]"
+4474,political,"[""bolsonaro""]"
+4485,political,"[""esquerda""]"
+4494,racism,"[""Branco""]"
+4498,misogyny,"[""machistas""]"
+4501,lgbtphobia,"[""#gay""]"
+4501,misogyny,"[""cadela""]"
+4516,body_shame,"[""feia,"", ""gorda,""]"
+4516,misogyny,"[""gorda,""]"
+4524,xenophobia,"[""refugiados?""]"
+4536,political,"[""bolsonaro"", ""direita"", ""esquerda,""]"
+4541,misogyny,[]
+4550,misogyny,[]
+4558,political,"[""bolsonaro"", ""lula""]"
+4574,lgbtphobia,"[""bicha""]"
+4586,political,"[""esquerdopata""]"
+4618,misogyny,"[""piranha/"", ""galinha""]"
+4649,political,"[""DILMA""]"
+4655,religious_intolerance,[]
+4655,xenophobia,[]
+4688,political,"[""\""feminazi\"""", ""feministo""]"
+4688,misogyny,"[""mulher"", ""\""feminazi\"""", ""\""puta\"""", ""\""burra\""""]"
+4695,misogyny,"[""galinha,""]"
+4709,political,"[""Lula""]"
+4725,lgbtphobia,"[""sapatão""]"
+4725,misogyny,"[""sapatão""]"
+4732,xenophobia,[]
+4735,lgbtphobia,"[""sapatão""]"
+4735,misogyny,"[""sapatão""]"
+4743,misogyny,"[""mulheres""]"
+4756,political,"[""política""]"
+4759,political,"[""pt...""]"
+4773,lgbtphobia,"[""fufas.""]"
+4773,misogyny,"[""fufas.""]"
+4774,aporophobia,[]
+4774,political,[]
+4789,body_shame,"[""gorda""]"
+4789,misogyny,"[""gorda""]"
+4791,lgbtphobia,[]
+4791,racism,"[""negão""]"
+4804,body_shame,[]
+4804,misogyny,"[""buceta""]"
+4814,lgbtphobia,"[""Hetero""]"
+4834,lgbtphobia,"[""bicha""]"
+4847,lgbtphobia,"[""XX""]"
+4847,misogyny,"[""mulher,""]"
+4873,misogyny,"[""burra"", ""MULHER""]"
+4902,body_shame,[]
+4903,misogyny,[]
+4916,political,[]
+4940,racism,[]
+4940,xenophobia,[]
+4967,political,"[""bolsonaro"", ""eleitor""]"
+4969,lgbtphobia,"[""bixa""]"
+4970,aporophobia,"[""pobre!""]"
+4977,political,"[""esquerda""]"
+4979,misogyny,"[""meninas,""]"
+4980,misogyny,[]
+5023,political,[]
+5028,political,"[""feminazi"", ""boquinha""]"
+5028,misogyny,"[""feminazi""]"
+5029,political,[]
+5038,misogyny,"[""vagabunda""]"
+5040,xenophobia,"[""imigrantes""]"
+5044,body_shame,"[""feia"", ""gorda""]"
+5044,misogyny,"[""gorda""]"
+5051,misogyny,"[""mulher""]"
+5054,political,"[""\""ativistas"", ""esquerdopatas\"""", ""Presidente"", ""#TRUMP.""]"
+5076,misogyny,[]
+5086,xenophobia,"[""EUROPEU"", ""REFUGIADOS""]"
+5094,body_shame,"[""PESO""]"
+5094,misogyny,[]
+5096,racism,"[""negras,"", ""branca""]"
+5096,misogyny,[]
+5100,capacitism,"[""analfabeto""]"
+5100,political,[]
+5102,xenophobia,[]
+5115,political,"[""esquerda.""]"
+5124,political,"[""Bozominions"", ""corrupto,""]"
+5151,racism,[]
+5151,xenophobia,[]
+5152,misogyny,"[""puta""]"
+5153,religious_intolerance,"[""religiosas"", ""crentaiada""]"
+5167,political,[]
+5170,lgbtphobia,"[""viado""]"
+5198,lgbtphobia,"[""romance"", ""gay...""]"
+5209,political,"[""Lulaladrao.""]"
+5227,body_shame,"[""feia"", ""gorda""]"
+5227,misogyny,"[""gorda"", ""porca""]"
+5231,political,[]
+5256,lgbtphobia,"[""sapatão""]"
+5256,misogyny,"[""sapatão""]"
+5267,religious_intolerance,"[""endiabrada""]"
+5267,misogyny,[]
+5283,misogyny,"[""cadela!""]"
+5290,political,[]
+5296,political,"[""esquerda"", ""presidente.""]"
+5305,body_shame,"[""gorda"", ""feia""]"
+5305,misogyny,"[""gorda""]"
+5309,racism,"[""Baiano""]"
+5309,xenophobia,"[""Baiano""]"
+5320,misogyny,[]
+5349,body_shame,[]
+5379,lgbtphobia,"[""fufas""]"
+5379,misogyny,"[""fufas""]"
+5381,lgbtphobia,"[""sapatão""]"
+5381,misogyny,"[""sapatão""]"
+5394,misogyny,[]
+5443,ageism,"[""senhora""]"
+5459,xenophobia,"[""refugiados""]"
+5462,religious_intolerance,"[""pastor"", ""demônio""]"
+5467,aporophobia,[]
+5476,political,[]
+5489,lgbtphobia,[]
+5489,misogyny,"[""mulher""]"
+5496,lgbtphobia,"[""viadinho""]"
+5522,political,"[""políticos"", ""bolsonaro""]"
+5535,misogyny,[]
+5540,misogyny,[]
+5568,aporophobia,"[""pobre"", ""laia""]"
+5585,political,"[""Lula""]"
+5593,xenophobia,"[""refugiados""]"
+5594,racism,"[""mexicanos""]"
+5594,misogyny,[]
+5594,xenophobia,"[""mexicanos""]"
+5600,xenophobia,"[""mineiro.""]"
+5602,lgbtphobia,"[""sapatão""]"
+5602,misogyny,"[""sapatão""]"
+5613,political,"[""FEMINISTO:""]"
+5613,misogyny,"[""MULHER""]"
+5635,ageism,"[""broxa.""]"
+5635,capacitism,"[""broxa.""]"
+5635,political,"[""lula""]"
+5664,xenophobia,"[""refugiados""]"
+5666,xenophobia,"[""paulista""]"
+5695,body_shame,[]
+5695,religious_intolerance,"[""umbanda"", ""macumba""]"
+5707,lgbtphobia,[]
+5711,misogyny,[]
+5718,political,[]
+5728,political,[]
+5736,ageism,"[""novo""]"
+5780,aporophobia,"[""pobres""]"
+5780,political,[]
+5787,misogyny,[]
+5801,body_shame,"[""gorda"", ""feia."", ""Feio"", ""gordo""]"
+5808,misogyny,[]
+5824,misogyny,"[""machistas""]"
+5838,lgbtphobia,"[""sapatao""]"
+5838,misogyny,"[""sapatao""]"
+5840,misogyny,"[""mulher"", ""burra""]"
+5843,racism,"[""preto""]"
+5845,political,[]
+5926,racism,"[""baiano""]"
+5932,misogyny,"[""piranha""]"
+5943,misogyny,"[""putinha""]"
+5948,misogyny,"[""mulher"", ""burra,""]"
+5949,political,"[""esquerdopatas.""]"
+5951,aporophobia,[]
+5951,political,"[""bolsonaro""]"
+5958,misogyny,"[""Safada😡""]"
+5960,racism,"[""preto""]"
+5960,misogyny,[]
+5961,body_shame,"[""gorda"", ""feia""]"
+5961,misogyny,"[""gorda""]"
+5971,political,[]
+5975,misogyny,"[""mulheres.""]"
+6000,political,"[""PT""]"
+6009,lgbtphobia,"[""fufas""]"
+6009,misogyny,"[""fufas""]"
+6016,xenophobia,[]
+6036,misogyny,"[""putinha""]"
+6043,political,[]
+6052,misogyny,"[""burra"", ""mulher""]"
+6056,political,[]
+6059,lgbtphobia,[]
+6059,misogyny,[]
+6067,political,"[""esquerda""]"
+6069,racism,[]
+6069,xenophobia,[]
+6070,political,"[""comunismo""]"
+6076,misogyny,"[""mulher"", ""burra""]"
+6078,political,"[""comunistas""]"
+6086,lgbtphobia,[]
+6086,misogyny,[]
+6103,misogyny,[]
+6105,lgbtphobia,[]
+6105,misogyny,"[""mulher""]"
+6106,political,"[""esquerda.""]"
+6120,lgbtphobia,"[""sapatao""]"
+6121,lgbtphobia,"[""bixa""]"
+6126,racism,[]
+6128,political,"[""partido,"", ""presidente""]"
+6148,misogyny,"[""mulheres""]"
+6150,lgbtphobia,[]
+6150,misogyny,"[""mulher""]"
+6158,misogyny,"[""vagabunda""]"
+6169,xenophobia,"[""país,"", ""refugiados."", ""terrorista""]"
+6174,xenophobia,"[""paulista"", ""carioca""]"
+6181,xenophobia,[]
+6215,misogyny,"[""NAMORADA""]"
+6219,lgbtphobia,[]
+6219,racism,"[""NEGÃO""]"
+6225,lgbtphobia,"[""boiola""]"
+6244,body_shame,[]
+6256,xenophobia,[]
+6262,lgbtphobia,"[""viadinho""]"
+6271,lgbtphobia,"[""bixa""]"
+6281,lgbtphobia,"[""fufas""]"
+6281,misogyny,"[""fufas""]"
+6287,misogyny,"[""mulher"", ""burra""]"
+6298,misogyny,[]
+6300,political,"[""Luladrão""]"
+6325,misogyny,"[""MULHER""]"
+6334,racism,"[""nega""]"
+6335,political,"[""bolsonaro"", ""fascista"", ""corruptos""]"
+6362,lgbtphobia,"[""fufas,""]"
+6362,misogyny,"[""fufas,""]"
+6388,xenophobia,[]
+6399,xenophobia,"[""refugiados"", ""Oriente""]"
+6429,misogyny,"[""mulher"", ""burra.""]"
+6450,body_shame,[]
+6453,political,"[""Luladrão""]"
+6461,body_shame,"[""gorda"", ""feia""]"
+6461,misogyny,"[""gorda""]"
+6469,lgbtphobia,[]
+6481,misogyny,[]
+6531,misogyny,[]
+6538,misogyny,"[""putinha""]"
+6541,lgbtphobia,"[""fufas"", ""gays""]"
+6541,misogyny,"[""fufas""]"
+6581,political,"[""partido""]"
+6586,misogyny,[]
+6598,political,"[""esquerdalha""]"
+6599,racism,"[""preto""]"
+6603,lgbtphobia,"[""sapatão"", ""viado""]"
+6603,misogyny,"[""sapatão"", ""Minas.""]"
+6606,lgbtphobia,"[""sapatão:""]"
+6633,body_shame,[]
+6633,misogyny,"[""mulher""]"
+6635,lgbtphobia,"[""fufas""]"
+6635,misogyny,"[""fufas""]"
+6645,misogyny,"[""putinha""]"
+6668,misogyny,[]
+6673,lgbtphobia,"[""gay""]"
+6687,political,"[""Comunistas""]"
+6699,misogyny,"[""puta""]"
+6718,lgbtphobia,[]
+6718,misogyny,[]
+6744,political,[]
+6744,misogyny,[]
+6759,xenophobia,"[""sulista""]"
+6767,political,[]
+6793,misogyny,"[""puta""]"
+6815,racism,"[""racista""]"
+6816,racism,"[""negro""]"
+6826,misogyny,"[""vagabunda""]"
+6840,aporophobia,"[""pobre"", ""fudido!!!!!""]"
+6843,racism,"[""macaco""]"
+6845,racism,"[""negros""]"
+6847,political,"[""bolsonaro""]"
+6857,misogyny,"[""mulher""]"
+6862,xenophobia,"[""ocidente""]"
+6882,misogyny,"[""mulher""]"
+6889,misogyny,"[""gorda\""""]"
+6921,misogyny,[]
+6930,misogyny,"[""putinha""]"
+6936,body_shame,[]
+6939,political,[]
+6965,body_shame,"[""feia,"", ""gorda,""]"
+6965,misogyny,"[""gorda,""]"
+6984,political,[]
+6995,misogyny,"[""Burra"", ""mulher"", ""Amante""]"
+6996,misogyny,[]
+7005,misogyny,"[""mulher,""]"
+7015,xenophobia,"[""refugiados"", ""países.""]"
+7026,misogyny,"[""namorada""]"
+7032,political,"[""esquerdista""]"
+7039,misogyny,[]
+7040,misogyny,[]
+7040,xenophobia,"[""sulistas""]"
+7053,misogyny,[]
+7066,misogyny,[]
+7077,lgbtphobia,[]
+7087,political,"[""Esquerdista.""]"
+7091,misogyny,"[""Vagabunda""]"
+7097,xenophobia,"[""europeu""]"
+7101,political,[]
+7101,misogyny,"[""FEMINISTAS""]"
+7107,ageism,"[""velha""]"
+7109,misogyny,"[""puta"", ""sapatao""]"
+7110,misogyny,"[""puta""]"
+7120,lgbtphobia,"[""viado""]"
+7123,lgbtphobia,"[""sapatão""]"
+7123,misogyny,"[""sapatão""]"
+7126,political,"[""Esquerdista""]"
+7137,political,"[""comunistas""]"
+7175,misogyny,"[""filha,""]"
+7181,political,"[""comunista"", ""presidiário"", ""partido""]"
+7197,lgbtphobia,"[""viado,""]"
+7216,lgbtphobia,"[""bixa""]"
+7220,xenophobia,[]
+7222,ageism,"[""velha""]"
+7222,body_shame,"[""feia,""]"
+7226,lgbtphobia,"[""biologicamente""]"
+7226,misogyny,[]
+7229,lgbtphobia,"[""gay""]"
+7235,misogyny,"[""piranha""]"
+7266,political,"[""lula"", ""bolsonaro.""]"
+7285,aporophobia,"[""desemprego"", ""miséria.""]"
+7285,political,"[""governo"", ""esquerda.""]"
+7294,political,[]
+7294,misogyny,"[""mulher"", ""feminista\"""", ""burra""]"
+7304,body_shame,"[""feia""]"
+7305,misogyny,"[""mulher"", ""burra""]"
+7306,political,"[""presidiário"", ""corrupção"", ""desgoverno""]"
+7322,body_shame,"[""feia"", ""gorda""]"
+7322,misogyny,"[""gorda""]"
+7326,xenophobia,"[""carioca,""]"
+7343,lgbtphobia,[]
+7357,political,"[""Partido"", ""PT""]"
+7378,lgbtphobia,"[""sapatão"", ""traveco""]"
+7378,misogyny,"[""sapatão""]"
+7379,body_shame,"[""feia""]"
+7379,misogyny,[]
+7385,xenophobia,[]
+7393,xenophobia,[]
+7394,xenophobia,"[""imigrantes,""]"
+7409,racism,"[""negro""]"
+7429,political,"[""Pt"", ""comunismo""]"
+7431,racism,[]
+7433,political,"[""PT""]"
+7442,ageism,"[""vovó.""]"
+7442,political,"[""bolsonaro,"", ""lula""]"
+7443,misogyny,"[""menina""]"
+7448,body_shame,[]
+7467,misogyny,"[""feministas"", ""mulher,""]"
+7481,misogyny,"[""Cadelinha""]"
+7485,political,"[""bolsonaro"", ""esquerdopatas?""]"
+7487,political,[]
+7494,political,[]
+7495,xenophobia,[]
+7505,ageism,[]
+7510,capacitism,"[""fanho""]"
+7521,ageism,"[""velha""]"
+7523,political,"[""#lulaladrao""]"
+7529,political,"[""governo"", ""esquerdista"", ""bolsonaro""]"
+7531,political,"[""PT""]"
+7535,political,"[""gado""]"
+7544,political,[]
+7561,misogyny,"[""vagabunda""]"
+7563,misogyny,"[""cadelas""]"
+7565,body_shame,"[""gordo:""]"
+7566,misogyny,"[""PORCA""]"
+7571,xenophobia,[]
+7579,political,"[""luladrão"", ""corrupção""]"
+7590,political,"[""esquerda""]"
+7623,lgbtphobia,"[""sapatao""]"
+7623,misogyny,"[""sapatao""]"
+7649,racism,"[""negra""]"
+7652,misogyny,"[""piranha""]"
+7657,xenophobia,"[""carioca""]"
+7663,lgbtphobia,[]
+7663,racism,[]
+7677,xenophobia,[]
+7701,misogyny,[]
+7706,racism,"[""racista""]"
+7708,misogyny,"[""menina""]"
+7709,lgbtphobia,"[""viado""]"
+7711,misogyny,[]
+7723,capacitism,"[""quadrilheiros""]"
+7723,racism,[]
+7747,misogyny,"[""puta""]"
+7771,political,[]
+7782,racism,[]
+7790,racism,[]
+7790,misogyny,[]
+7809,political,"[""bolsonaro"", ""governo"", ""lula""]"
+7813,xenophobia,[]
+7817,lgbtphobia,[]
+7817,political,[]
+7828,body_shame,"[""gorda"", ""feia""]"
+7828,misogyny,"[""gorda""]"
+7850,political,"[""esquerdalha""]"
+7851,lgbtphobia,"[""Sapatão""]"
+7851,misogyny,"[""Sapatão""]"
+7862,political,"[""esquerda."", ""gado""]"
+7867,political,"[""esquerda:""]"
+7899,body_shame,"[""feia""]"
+7899,misogyny,[]
+7919,religious_intolerance,"[""islâmico.""]"
+7919,xenophobia,"[""islâmico.""]"
+7921,misogyny,"[""putas""]"
+7937,misogyny,"[""mulher"", ""puta,"", ""burra""]"
+7978,body_shame,"[""ovo"", ""feia"", ""gorda""]"
+7978,misogyny,"[""gorda""]"
+7986,racism,"[""branco""]"
+8007,xenophobia,"[""nordestino""]"
+8008,religious_intolerance,"[""judeu""]"
+8008,xenophobia,[]
+8014,political,"[""bolsonaro"", ""esquerda,""]"
+8014,xenophobia,[]
+8023,misogyny,"[""mulher""]"
+8025,misogyny,[]
+8046,misogyny,"[""putinha""]"
+8069,political,[]
+8069,religious_intolerance,[]
+8089,lgbtphobia,"[""gay""]"
+8091,misogyny,[]
+8098,xenophobia,[]
+8122,misogyny,"[""vagabunda""]"
+8126,religious_intolerance,[]
+8144,political,[]
+8154,political,"[""congresso"", ""comunista""]"
+8166,misogyny,"[""mulher"", ""burra""]"
+8191,misogyny,"[""burra"", ""mulher""]"
+8216,misogyny,[]
+8230,lgbtphobia,"[""sapatão""]"
+8230,misogyny,"[""sapatão""]"
+8248,lgbtphobia,[]
+8248,misogyny,"[""mulher""]"
+8286,political,[]
+8291,misogyny,"[""mulher"", ""burra""]"
+8295,lgbtphobia,[]
+8295,political,"[""bolsonaro.""]"
+8303,political,[]
+8308,lgbtphobia,"[""sapatao""]"
+8308,misogyny,"[""sapatao""]"
+8315,misogyny,[]
+8331,lgbtphobia,"[""sapatão"", ""hetero""]"
+8334,political,[]
+8349,lgbtphobia,"[""traveco""]"
+8358,misogyny,"[""vadias""]"
+8364,misogyny,"[""vagabunda""]"
+8366,political,"[""Minions""]"
+8386,political,[]
+8386,misogyny,"[""mulheres""]"
+8404,political,[]
+8412,misogyny,"[""mulher"", ""burra""]"
+8417,misogyny,[]
+8423,misogyny,[]
+8424,misogyny,[]
+8426,political,"[""gado""]"
+8434,misogyny,"[""Mulher""]"
+8447,misogyny,"[""puta""]"
+8464,lgbtphobia,"[""sapatão""]"
+8464,misogyny,"[""sapatão""]"
+8487,misogyny,"[""galinha!""]"
+8502,misogyny,"[""#corno""]"
+8517,body_shame,"[""feia""]"
+8517,lgbtphobia,"[""gay""]"
+8526,political,"[""esquerdista""]"
+8529,political,"[""direita""]"
+8556,lgbtphobia,"[""viado""]"
+8570,political,[]
+8570,misogyny,"[""feminista?""]"
+8587,misogyny,[]
+8588,xenophobia,"[""baiano""]"
+8607,misogyny,"[""burra""]"
+8614,racism,[]
+8614,xenophobia,[]
+8620,xenophobia,"[""África"", ""muro?""]"
+8627,misogyny,[]
+8633,misogyny,[]
+8635,political,"[""ESQUERDOPATA"", ""COMUNISMO""]"
+8650,political,"[""esquerda?!...""]"
+8672,lgbtphobia,"[""sapatao""]"
+8676,political,"[""esquerda""]"
+8694,xenophobia,"[""carioca""]"
+8713,political,"[""feminazi""]"
+8713,misogyny,"[""\""Mulheres"", ""feminazi""]"
+8718,lgbtphobia,"[""sapatão""]"
+8718,misogyny,"[""namorada"", ""sapatão""]"
+8721,racism,"[""negão.""]"
+8732,political,"[""Esquerdista""]"
