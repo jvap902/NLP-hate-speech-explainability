@@ -16,7 +16,7 @@ parser.add_argument("-nig", "--new_ig", required=False, action='store_true', def
 
 args = parser.parse_args()
 
-def attribute(modelc, ig_dataset, indices, indices_for_plot: deque[int]):
+def attribute(modelc, ig_dataset, indices, plot_indices: deque[int]):
     ig_tokenized = modelc.tokenize(ig_dataset).with_format(type="torch", columns=["input_ids", "attention_mask", "labels"])
     
     ig_loader = DataLoader(ig_tokenized, batch_size=32, shuffle=False, num_workers=4, collate_fn=modelc.data_collator)
@@ -93,10 +93,11 @@ if __name__ == "__main__":
         
     #ig_dataset, indices = loadDataset.igDataset(test) todo conjunto de teste sendo utilizado agora
 
-    indices = list(range(len(test)))
     plot_indices = loadDataset.getPlotIndices()
-    
-    if args.new_ig or not Path(f"{config.ig_dir}/{modelc.name}.csv"): attribute(modelc, test, indices, plot_indices)
+    indices = list(plot_indices) #list(range(len(test)))
+    dt = test.select(plot_indices)
+
+    if args.new_ig or not Path(f"{config.ig_dir}/{modelc.name}.csv"): attribute(modelc, dt, indices, plot_indices)
     
     model_attr = pd.read_csv(f'{config.ig_dir}/{modelc.name}.csv')
     instances = pd.read_csv(f'{config.ig_dir}/instances.csv')

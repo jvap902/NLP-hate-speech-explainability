@@ -60,8 +60,8 @@ def explainPrediction(modelc, tokenized_dataset, indices, plot_indices: deque[in
             del attributions
             
             df_sentence[class_name] = attr_array[token_mask] #remove tokens especiais como [cls, sep]
-
-        if i == plot_indices[0]:
+            
+        if text_id == plot_indices[0]:
             plot_indices.popleft()
             plotAttributions(df_sentence, save_path=f"{config.ig_dir}/images/{modelc.name}/{text_id}-ig.png", show=show_graph)
         
