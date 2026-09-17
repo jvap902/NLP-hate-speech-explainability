@@ -3,6 +3,7 @@ import argparse
 import numpy as np
 import pandas as pd
 from pathlib import Path
+from collections import deque
 from sklearn.metrics import f1_score
 from torch.utils.data import DataLoader
 from src import *
@@ -15,7 +16,7 @@ parser.add_argument("-nig", "--new_ig", required=False, action='store_true', def
 
 args = parser.parse_args()
 
-def attribute(modelc, ig_dataset, indices):
+def attribute(modelc, ig_dataset, indices, indices_for_plot: deque[int]):
     ig_tokenized = modelc.tokenize(ig_dataset).with_format(type="torch", columns=["input_ids", "attention_mask", "labels"])
     
     ig_loader = DataLoader(ig_tokenized, batch_size=32, shuffle=False, num_workers=4, collate_fn=modelc.data_collator)
@@ -31,7 +32,7 @@ def attribute(modelc, ig_dataset, indices):
 
     print(f"f1 score micro: {f1_score(y_true, y_pred, average='micro')}\nf1 score macro: {f1_score(y_true, y_pred, average="macro")}")
     
-    interpret.explainPrediction(modelc, ig_tokenized, indices, show_graph=False)
+    interpret.explainPrediction(modelc, ig_tokenized, indices, plot_indices, show_graph=False)
     
 def loadModelc():
     name = args.model
@@ -93,7 +94,9 @@ if __name__ == "__main__":
     #ig_dataset, indices = loadDataset.igDataset(test) todo conjunto de teste sendo utilizado agora
 
     indices = list(range(len(test)))
-    if args.new_ig or not Path(f"{config.ig_dir}/{modelc.name}.csv"): attribute(modelc, test, indices)
+    plot_indices = loadDataset.getPlotIndices()
+    
+    if args.new_ig or not Path(f"{config.ig_dir}/{modelc.name}.csv"): attribute(modelc, test, indices, plot_indices)
     
     model_attr = pd.read_csv(f'{config.ig_dir}/{modelc.name}.csv')
     instances = pd.read_csv(f'{config.ig_dir}/instances.csv')

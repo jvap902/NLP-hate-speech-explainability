@@ -2,8 +2,9 @@ import ast
 import torch
 import pandas as pd
 from tqdm import tqdm
-from src import config
+from collections import deque
 from captum.attr import LayerIntegratedGradients
+from src import config
 from .dataVisualization import plotAttributions
 
 def getEmbeddingsLayer(model):
@@ -14,7 +15,7 @@ def getEmbeddingsLayer(model):
     raise AttributeError(f"Não foi possível encontrar a camada de embeddings em {type(model).__name__}. "
                          f"Atributos disponíveis: {[n for n, _ in model.named_children()]}")
 
-def explainPrediction(modelc, tokenized_dataset, indices, show_graph=True):
+def explainPrediction(modelc, tokenized_dataset, indices, plot_indices: deque[int], show_graph=True):
     modelc.model.eval()
     
     df_attributions = pd.DataFrame()
@@ -60,14 +61,16 @@ def explainPrediction(modelc, tokenized_dataset, indices, show_graph=True):
             
             df_sentence[class_name] = attr_array[token_mask] #remove tokens especiais como [cls, sep]
 
-        plotAttributions(df_sentence, save_path=f"{config.ig_dir}/images/{modelc.name}/{text_id}-ig.png", show=show_graph)
+        if i == plot_indices[0]:
+            plot_indices.popleft()
+            plotAttributions(df_sentence, save_path=f"{config.ig_dir}/images/{modelc.name}/{text_id}-ig.png", show=show_graph)
         
         df_attributions = pd.concat([df_attributions, df_sentence], axis=0, ignore_index=True)
         
         del df_sentence
         torch.cuda.empty_cache()
         
-    df_attributions.to_csv(f"{config.ig_dir}/{modelc.name}.csv", header=True)
+    #df_attributions.to_csv(f"{config.ig_dir}/{modelc.name}.csv", header=True)
 
 def compareHumanModel(modelc, model_attr, instances):
     

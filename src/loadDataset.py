@@ -1,12 +1,14 @@
-from huggingface_hub import login
-from pathlib import Path
-from datasets import load_dataset, load_from_disk, Dataset
+import json
 import numpy as np
 import pandas as pd
-from skmultilearn.model_selection import iterative_train_test_split
+from pathlib import Path
+from collections import deque
+from rich.panel import Panel
 from rich.console import Console
 from rich.markdown import Markdown
-from rich.panel import Panel
+from huggingface_hub import login
+from datasets import load_dataset, load_from_disk, Dataset
+from skmultilearn.model_selection import iterative_train_test_split
 from . import config
 from .logging import LivePanel
 
@@ -91,19 +93,6 @@ def loadTuPyE(train_size=-1, test_size=-1): #-1 quer dizer carregar inteiro
     
     return train, test
 
-
-def igDataset(test_dataset):
-   
-    # Agora estamos faremos as atribuições para o dataset inteiro, portanto esta função deixará de ser utilizada
-    
-    instances_df = pd.read_csv(f'{config.ig_dir}/instances.csv')
-    
-    indices = instances_df['id'].tolist()
-    
-    ig_dataset = test_dataset.select(indices)
-    
-    return ig_dataset, indices
-
 def prepareDataset(tokenized_ds):
     """
     Junta as colunas individuais de classe numa coluna 'labels' float32,
@@ -117,3 +106,31 @@ def prepareDataset(tokenized_ds):
     ds = ds.remove_columns(config.dataset_classes)
     ds.set_format(type="torch", columns=["input_ids", "attention_mask", "labels"])
     return ds
+
+def getPlotIndices(file_path: str = "utils/selected_instances.json") -> deque[int]:
+    with open(file_path, 'r') as f:
+        data = json.load(f)
+
+    plot_indices = []
+
+    for class_name in data:
+        for instance_type in data[class_name]:
+            for instance in data[class_name][instance_type]:
+                plot_indices.append(instance["id"])
+
+    plot_indices.sort()
+    
+    return deque(plot_indices)
+
+
+def igDataset(test_dataset):
+   
+    # Agora estamos faremos as atribuições para o dataset inteiro, portanto esta função deixará de ser utilizada
+    
+    instances_df = pd.read_csv(f'{config.ig_dir}/instances.csv')
+    
+    indices = instances_df['id'].tolist()
+    
+    ig_dataset = test_dataset.select(indices)
+    
+    return ig_dataset, indices

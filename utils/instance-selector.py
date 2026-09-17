@@ -27,8 +27,8 @@ def main():
 
     for c in classes:
         instances_dict[c] = {
-            "exclusive": select_exclusive_instances(dataset, c),
-            "multi": select_multi_instances(dataset, c)
+            "exclusive": select_exclusive_instances(dataset, c, n=3),
+            "multi": select_multi_instances(dataset, c, n=2)
         }
 
     with open("utils/selected_instances.json", "w", encoding='utf-8') as f:
