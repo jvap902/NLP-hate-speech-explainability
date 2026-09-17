@@ -93,11 +93,10 @@ if __name__ == "__main__":
         
     #ig_dataset, indices = loadDataset.igDataset(test) todo conjunto de teste sendo utilizado agora
 
+    indices = list(range(len(test)))
     plot_indices = loadDataset.getPlotIndices()
-    indices = list(plot_indices) #list(range(len(test)))
-    dt = test.select(plot_indices)
 
-    if args.new_ig or not Path(f"{config.ig_dir}/{modelc.name}.csv"): attribute(modelc, dt, indices, plot_indices)
+    if args.new_ig or not Path(f"{config.ig_dir}/{modelc.name}.csv"): attribute(modelc, test, indices, plot_indices)
     
     model_attr = pd.read_csv(f'{config.ig_dir}/{modelc.name}.csv')
     instances = pd.read_csv(f'{config.ig_dir}/instances.csv')
