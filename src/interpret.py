@@ -27,9 +27,10 @@ def explainPrediction(modelc, tokenized_dataset, indices, show_graph=True):
     lig = LayerIntegratedGradients(forward_func, getEmbeddingsLayer(modelc.model))
     
     # pega tokens speciais de acordo com o modelo
-    special_tokens = set(modelc.tokenizer.all_special_tokens)    
+    ignore_tokens = {modelc.tokenizer.cls_token, modelc.tokenizer.sep_token, modelc.tokenizer.pad_token}
+    unk_token = modelc.tokenizer.unk_token
     
-    for i in range(len(tokenized_dataset)):
+    for i in tqdm(range(len(tokenized_dataset)), desc="Generating attributions"):
         
         instance = tokenized_dataset[i]
         text_id = indices[i]
@@ -44,8 +45,8 @@ def explainPrediction(modelc, tokenized_dataset, indices, show_graph=True):
         # Pegamos os tokens correspondentes a esse corte
         all_tokens = modelc.tokenizer.convert_ids_to_tokens(input_ids[0])
         
-        token_mask = [t not in special_tokens for t in all_tokens]
-        tokens     = [t for t, keep in zip(all_tokens, token_mask) if keep]
+        token_mask = [t not in ignore_tokens for t in all_tokens]
+        tokens = [f"⚠️ {t}" if t == unk_token else t for t, keep in zip(all_tokens, token_mask) if keep]
         
         df_sentence = pd.DataFrame({'text_id': text_id, 'token': tokens})
         
@@ -58,8 +59,8 @@ def explainPrediction(modelc, tokenized_dataset, indices, show_graph=True):
             del attributions
             
             df_sentence[class_name] = attr_array[token_mask] #remove tokens especiais como [cls, sep]
-        
-        plotAttributions(df_sentence, save_path=f"{config.ig_dir}/images/{modelc.name}-{text_id}-ig.png", show=show_graph)
+
+        plotAttributions(df_sentence, save_path=f"{config.ig_dir}/images/{modelc.name}/{text_id}-ig.png", show=show_graph)
         
         df_attributions = pd.concat([df_attributions, df_sentence], axis=0, ignore_index=True)
         

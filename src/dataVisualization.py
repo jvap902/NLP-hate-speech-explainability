@@ -6,8 +6,11 @@ import matplotlib.pyplot as plt
 from src import config
 
 def plotAttributions(df: pd.DataFrame, save_path=None, show=True):
-    # Converter de Wide (uma coluna por classe) para Long (formato do Seaborn)
-    # Isso coloca todas as atribuições em uma única coluna 'Score' e os nomes das classes em 'Classe'
+
+    if df is None or df.empty:
+        print(f"⚠️ DataFrame vazio recebido. Plot ignorado.")
+        return
+
     df = df.drop(columns=["text_id"])
     df['token_position'] = np.arange(len(df))
     
@@ -26,12 +29,17 @@ def plotAttributions(df: pd.DataFrame, save_path=None, show=True):
         style="Class",
         dashes=subtle_dashes, # Cleans up the line styles
         linewidth=2.0, 
-        palette="husl"
+        palette="husl",
+        markers=True
     )
     
-    # 3. Ajustes de escala e estética
     plt.axhline(0, color='black', linestyle='-', alpha=0.3)
-    plt.xlim(df['token_position'].min(), df['token_position'].max())
+    
+    if len(df) > 1:
+        plt.xlim(df['token_position'].min(), df['token_position'].max())
+    else:
+        # Se tiver apenas 1 token na frase inteira, centraliza o gráfico
+        plt.xlim(-1, 1)
     
     y_min, y_max = df_long["Attribution"].min(), df_long["Attribution"].max()
     

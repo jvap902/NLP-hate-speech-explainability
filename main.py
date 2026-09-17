@@ -25,13 +25,11 @@ def attribute(modelc, ig_dataset, indices):
     ig_predictions['text_id'] = indices
     ig_predictions = ig_predictions[["model", "text_id", "text", "labels", "preds"]]
     ig_predictions.to_csv(f'{config.ig_dir}/predictions.csv', mode='a', header=False, index=False)
-
-    print(ig_predictions)
     
     y_true = np.array(ig_predictions['labels'].tolist())
     y_pred = np.array(ig_predictions['preds'].tolist())
 
-    print(f1_score(y_true, y_pred, average='micro'))
+    print(f"f1 score micro: {f1_score(y_true, y_pred, average='micro')}\nf1 score macro: {f1_score(y_true, y_pred, average="macro")}")
     
     interpret.explainPrediction(modelc, ig_tokenized, indices, show_graph=False)
     
@@ -92,9 +90,10 @@ if __name__ == "__main__":
         eval_data = classify.testModel(modelc)
         print(eval_data)
         
-    ig_dataset, indices = loadDataset.igDataset(test)
+    #ig_dataset, indices = loadDataset.igDataset(test) todo conjunto de teste sendo utilizado agora
 
-    if args.new_ig or not Path(f"{config.ig_dir}/{modelc.name}.csv"): attribute(modelc, ig_dataset, indices)
+    indices = list(range(len(test)))
+    if args.new_ig or not Path(f"{config.ig_dir}/{modelc.name}.csv"): attribute(modelc, test, indices)
     
     model_attr = pd.read_csv(f'{config.ig_dir}/{modelc.name}.csv')
     instances = pd.read_csv(f'{config.ig_dir}/instances.csv')

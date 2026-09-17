@@ -93,6 +93,8 @@ def loadTuPyE(train_size=-1, test_size=-1): #-1 quer dizer carregar inteiro
 
 
 def igDataset(test_dataset):
+   
+    # Agora estamos faremos as atribuições para o dataset inteiro, portanto esta função deixará de ser utilizada
     
     instances_df = pd.read_csv(f'{config.ig_dir}/instances.csv')
     
