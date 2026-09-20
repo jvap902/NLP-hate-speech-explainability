@@ -66,6 +66,9 @@ def explainPrediction(modelc, tokenized_dataset, indices, plot_indices: deque[in
             plotAttributions(df_sentence, save_path=f"{config.ig_dir}/images/{modelc.name}/{text_id}-ig.png", show=show_graph)
         
         df_attributions = pd.concat([df_attributions, df_sentence], axis=0, ignore_index=True)
+
+        # add csv line to save the progress
+        df_sentence.to_csv(f"{config.ig_dir}/{modelc.name}.csv", header=False, mode='a')
         
         del df_sentence
         torch.cuda.empty_cache()

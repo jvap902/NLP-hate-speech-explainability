@@ -108,7 +108,7 @@ def prepareDataset(tokenized_ds):
     return ds
 
 def getPlotIndices(file_path: str = "utils/selected_instances.json") -> deque[int]:
-    with open(file_path, 'r') as f:
+    with open(file_path, 'r', encoding='utf-8') as f:
         data = json.load(f)
 
     plot_indices = []

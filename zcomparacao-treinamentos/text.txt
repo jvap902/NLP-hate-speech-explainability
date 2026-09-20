@@ -1,5 +1,0 @@
-inicial parece melhor do que do claud pelo menos nas épocas de treinamento iniciais
-
-testar torchtune
-
-esquece ideia do claudio
