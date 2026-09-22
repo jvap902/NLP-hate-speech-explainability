@@ -73,7 +73,7 @@ def explainPrediction(modelc, tokenized_dataset, indices, plot_indices: deque[in
         del df_sentence
         torch.cuda.empty_cache()
         
-    df_attributions.to_csv(f"{config.ig_dir}/{modelc.name}.csv", header=True)
+    #df_attributions.to_csv(f"{config.ig_dir}/{modelc.name}.csv", header=True)
 
 def compareHumanModel(modelc, model_attr, instances):
     

@@ -21,16 +21,16 @@ def attribute(modelc, ig_dataset, indices, plot_indices: deque[int]):
     
     ig_loader = DataLoader(ig_tokenized, batch_size=32, shuffle=False, num_workers=4, collate_fn=modelc.data_collator)
     
-    ig_predictions = classify.classifyInputs(modelc, ig_loader)
-    ig_predictions['model'] = modelc.name
-    ig_predictions['text_id'] = indices
-    ig_predictions = ig_predictions[["model", "text_id", "text", "labels", "preds"]]
-    ig_predictions.to_csv(f'{config.ig_dir}/predictions.csv', mode='a', header=False, index=False)
-    
-    y_true = np.array(ig_predictions['labels'].tolist())
-    y_pred = np.array(ig_predictions['preds'].tolist())
+    #ig_predictions = classify.classifyInputs(modelc, ig_loader)
+    #ig_predictions['model'] = modelc.name
+    #ig_predictions['text_id'] = indices
+    #ig_predictions = ig_predictions[["model", "text_id", "text", "labels", "preds"]]
+    #ig_predictions.to_csv(f'{config.ig_dir}/predictions.csv', mode='a', header=False, index=False)
+    #
+    #y_true = np.array(ig_predictions['labels'].tolist())
+    #y_pred = np.array(ig_predictions['preds'].tolist())
 
-    print(f"f1 score micro: {f1_score(y_true, y_pred, average='micro')}\nf1 score macro: {f1_score(y_true, y_pred, average="macro")}")
+    #print(f"f1 score micro: {f1_score(y_true, y_pred, average='micro')}\nf1 score macro: {f1_score(y_true, y_pred, average="macro")}")
     
     interpret.explainPrediction(modelc, ig_tokenized, indices, plot_indices, show_graph=False)
     
@@ -96,7 +96,12 @@ if __name__ == "__main__":
     indices = list(range(len(test)))
     plot_indices = loadDataset.getPlotIndices()
 
-    if args.new_ig or not Path(f"{config.ig_dir}/{modelc.name}.csv"): attribute(modelc, test, indices, plot_indices)
+    #remover antes de fazer o commit!
+    indices = [i for i in indices if i >= 4084]
+    plot_indices = deque([i for i in plot_indices if i >= 4084])
+    dt = test.select(indices)
+
+    if args.new_ig or not Path(f"{config.ig_dir}/{modelc.name}.csv"): attribute(modelc, dt, indices, plot_indices)
     
     model_attr = pd.read_csv(f'{config.ig_dir}/{modelc.name}.csv')
     instances = pd.read_csv(f'{config.ig_dir}/instances.csv')
