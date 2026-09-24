@@ -61,14 +61,15 @@ def explainPrediction(modelc, tokenized_dataset, indices, plot_indices: deque[in
             
             df_sentence[class_name] = attr_array[token_mask] #remove tokens especiais como [cls, sep]
 
-        if text_id == plot_indices[0]:
-            plot_indices.popleft()
-            plotAttributions(df_sentence, save_path=f"{config.ig_dir}/images/{modelc.name}/{text_id}-ig.png", show=show_graph)
+        if plot_indices:
+            if text_id == plot_indices[0]:
+                plot_indices.popleft()
+                plotAttributions(df_sentence, save_path=f"{config.ig_dir}/images/{modelc.name}/{text_id}-ig.png", show=show_graph)
         
         df_attributions = pd.concat([df_attributions, df_sentence], axis=0, ignore_index=True)
 
         # add csv line to save the progress
-        df_sentence.to_csv(f"{config.ig_dir}/{modelc.name}.csv", header=False, mode='a')
+        df_sentence.to_csv(f"{config.ig_dir}/{modelc.name}.csv", header=False, mode='a', index=False)
         
         del df_sentence
         torch.cuda.empty_cache()

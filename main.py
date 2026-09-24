@@ -96,12 +96,7 @@ if __name__ == "__main__":
     indices = list(range(len(test)))
     plot_indices = loadDataset.getPlotIndices()
 
-    #remover antes de fazer o commit!
-    indices = [i for i in indices if i >= 4084]
-    plot_indices = deque([i for i in plot_indices if i >= 4084])
-    dt = test.select(indices)
-
-    if args.new_ig or not Path(f"{config.ig_dir}/{modelc.name}.csv"): attribute(modelc, dt, indices, plot_indices)
+    if args.new_ig or not Path(f"{config.ig_dir}/{modelc.name}.csv"): attribute(modelc, test, indices, plot_indices)
     
     model_attr = pd.read_csv(f'{config.ig_dir}/{modelc.name}.csv')
     instances = pd.read_csv(f'{config.ig_dir}/instances.csv')
