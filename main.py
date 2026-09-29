@@ -31,7 +31,7 @@ def attribute(modelc, ig_dataset, indices, plot_indices: deque[int]):
     #y_pred = np.array(ig_predictions['preds'].tolist())
 
     #print(f"f1 score micro: {f1_score(y_true, y_pred, average='micro')}\nf1 score macro: {f1_score(y_true, y_pred, average="macro")}")
-    
+
     interpret.explainPrediction(modelc, ig_tokenized, indices, plot_indices, show_graph=False)
     
 def loadModelc():

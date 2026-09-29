@@ -17,9 +17,7 @@ def getEmbeddingsLayer(model):
 
 def explainPrediction(modelc, tokenized_dataset, indices, plot_indices: deque[int], show_graph=True):
     modelc.model.eval()
-    
-    df_attributions = pd.DataFrame()
-    
+
     #wrapper
     def forward_func(input_ids):
         return modelc.model(input_ids).logits
@@ -30,7 +28,7 @@ def explainPrediction(modelc, tokenized_dataset, indices, plot_indices: deque[in
     # pega tokens speciais de acordo com o modelo
     ignore_tokens = {modelc.tokenizer.cls_token, modelc.tokenizer.sep_token, modelc.tokenizer.pad_token}
     unk_token = modelc.tokenizer.unk_token
-    
+        
     for i in tqdm(range(len(tokenized_dataset)), desc="Generating attributions"):
         
         instance = tokenized_dataset[i]
@@ -66,15 +64,12 @@ def explainPrediction(modelc, tokenized_dataset, indices, plot_indices: deque[in
                 plot_indices.popleft()
                 plotAttributions(df_sentence, save_path=f"{config.ig_dir}/images/{modelc.name}/{text_id}-ig.png", show=show_graph)
         
-        df_attributions = pd.concat([df_attributions, df_sentence], axis=0, ignore_index=True)
-
         # add csv line to save the progress
         df_sentence.to_csv(f"{config.ig_dir}/{modelc.name}.csv", header=False, mode='a', index=False)
         
         del df_sentence
         torch.cuda.empty_cache()
         
-    #df_attributions.to_csv(f"{config.ig_dir}/{modelc.name}.csv", header=True)
 
 def compareHumanModel(modelc, model_attr, instances):
     

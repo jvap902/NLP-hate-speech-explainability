@@ -27,7 +27,7 @@ def loadToken(file_path):
 def stratifiedIndices(dataset, subset_size):
     
     # 1. Extract labels
-    y = np.array([dataset[col] for col in config.dataset_classesclasses]).T
+    y = np.array([dataset[col] for col in config.dataset_classes]).T
     
     # 2. Create indices
     indices = np.arange(len(y)).reshape(-1, 1)

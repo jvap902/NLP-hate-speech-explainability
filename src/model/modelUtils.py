@@ -21,13 +21,12 @@ def getTrainingArgs(modelc, epochs, batch_size=32, lr=3e-05):
             per_device_eval_batch_size = batch_size,
             gradient_accumulation_steps=acc_steps,
             gradient_checkpointing=True if 'albertina' in modelc.name.lower() else False,
-            fp16=torch.cuda.is_available() and not supports_bf16,  # ✅ só usa fp16 se bf16 não estiver disponível
+            fp16=torch.cuda.is_available() and not supports_bf16,
             bf16=supports_bf16,
             logging_steps=20,
             report_to="none",
             learning_rate=lr,
-            num_train_epochs = epochs,
-            load_best_model_at_end = True
+            num_train_epochs = epochs
         )
         
         return training_args
@@ -55,7 +54,7 @@ def getBERTimbau(modelc):
     return model, tokenizer
 
 def getGeneric(modelc):
-    model = AutoModelForSequenceClassification.from_pretrained(modelc.link, num_labels=len(model_classes), problem_type="multi_label_classification")
+    model = AutoModelForSequenceClassification.from_pretrained(modelc.link, num_labels=len(model_classes), problem_type="multi_label_classification", ignore_mismatched_sizes=True)
     model.config.problem_type = "multi_label_classification"
     
     tokenizer = AutoTokenizer.from_pretrained(modelc.link)
